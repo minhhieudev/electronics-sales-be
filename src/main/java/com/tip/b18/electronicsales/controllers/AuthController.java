@@ -18,7 +18,7 @@ public class AuthController {
     private final AccountService accountService;
     private final JwtService jwtService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://electronics-sales.vercel.app")
     @PostMapping("/login")
     public ResponseDTO<AccountDTO> loginAccount(@RequestBody @Valid AccountLoginDTO accountLoginDTO){
         AccountDTO account = accountService.loginAccount(accountLoginDTO);
@@ -33,7 +33,7 @@ public class AuthController {
         return responseDTO;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://electronics-sales.vercel.app/")
     @PostMapping("/register")
     public ResponseDTO<AccountDTO> registerAccount(@RequestBody @Valid AccountRegisterDTO accountRegisterDTO){
         AccountDTO account = accountService.registerAccount(accountRegisterDTO);
