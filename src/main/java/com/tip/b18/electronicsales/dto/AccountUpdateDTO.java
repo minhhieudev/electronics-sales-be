@@ -12,4 +12,5 @@ public class AccountUpdateDTO {
       private LocalDate birthDay;
       private String address;
       private boolean gender;
+      private String avatarUrl;
 }

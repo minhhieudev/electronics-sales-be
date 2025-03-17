@@ -101,6 +101,7 @@ public class AccountServiceImpl implements AccountService {
         String numberPhone = accountUpdateDTO.getNumberPhone();
         LocalDate birthDay = accountUpdateDTO.getBirthDay();
         boolean gender = accountUpdateDTO.isGender();
+        String avatarUrl = accountUpdateDTO.getAvatarUrl();
 
         boolean isChange = false;
 
@@ -132,6 +133,10 @@ public class AccountServiceImpl implements AccountService {
         }
         if(gender != account.isGender()){
             account.setGender(gender);
+            isChange = true;
+        }
+        if(avatarUrl != null && !avatarUrl.equals(account.getAvatarUrl())){
+            account.setAvatarUrl(avatarUrl);
             isChange = true;
         }
 

@@ -33,4 +33,7 @@ public class Account extends BaseEntity {
 
     @Column(name = "birth_day")
     private LocalDate birthDay;
+
+    @Column(name = "avatar_url", columnDefinition = "TEXT")
+    private String avatarUrl;
 }

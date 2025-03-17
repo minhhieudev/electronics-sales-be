@@ -9,7 +9,10 @@ import com.tip.b18.electronicsales.services.AccountService;
 import com.tip.b18.electronicsales.services.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -18,7 +21,6 @@ public class AuthController {
     private final AccountService accountService;
     private final JwtService jwtService;
 
-    @CrossOrigin(origins = "https://electronics-sales.vercel.app")
     @PostMapping("/login")
     public ResponseDTO<AccountDTO> loginAccount(@RequestBody @Valid AccountLoginDTO accountLoginDTO){
         AccountDTO account = accountService.loginAccount(accountLoginDTO);
@@ -33,7 +35,6 @@ public class AuthController {
         return responseDTO;
     }
 
-    @CrossOrigin(origins = "https://electronics-sales.vercel.app/")
     @PostMapping("/register")
     public ResponseDTO<AccountDTO> registerAccount(@RequestBody @Valid AccountRegisterDTO accountRegisterDTO){
         AccountDTO account = accountService.registerAccount(accountRegisterDTO);
