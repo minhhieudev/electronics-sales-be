@@ -3,6 +3,7 @@ package com.tip.b18.electronicsales.utils;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.exceptions.CredentialsException;
 import com.tip.b18.electronicsales.exceptions.NotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.UUID;
@@ -34,6 +35,21 @@ public class SecurityUtil {
             return UUID.fromString(id);
         }
         throw new CredentialsException(MessageConstant.ERROR_INVALID_ACCESS_TOKEN);
+    }
+
+    public static boolean isAdminRole(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.getAuthorities() != null){
+            String role = authentication.getAuthorities().iterator().next().getAuthority();
+
+            return "ROLE_ADMIN".equals(role);
+        }
+        return false;
+    }
+
+    public static boolean isPublicAPI(HttpServletRequest request){
+        String url = request.getRequestURI();
+        return "/api/categories".equals(url) && "GET".equalsIgnoreCase(request.getMethod());
     }
 }
 

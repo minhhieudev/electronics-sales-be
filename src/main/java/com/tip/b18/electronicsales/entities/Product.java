@@ -31,8 +31,6 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    private int rom;
-
     @Column(name = "price", precision = 10, scale = 2, nullable = false)
     private BigDecimal price;
 

@@ -174,7 +174,7 @@ public class AccountServiceImpl implements AccountService {
             }else if(passwordService.matches(newPassword, currentPassword)){
                 return;
             }
-            account.setPassword(newPassword);
+            account.setPassword(passwordService.encryptPassword(newPassword));
             accountRepository.save(account);
         }
     }

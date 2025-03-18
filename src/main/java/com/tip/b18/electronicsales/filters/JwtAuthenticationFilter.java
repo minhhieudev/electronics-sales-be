@@ -3,6 +3,7 @@ package com.tip.b18.electronicsales.filters;
 import com.tip.b18.electronicsales.exceptions.CredentialsException;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.services.JwtService;
+import com.tip.b18.electronicsales.utils.SecurityUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,22 +32,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-            try {
-                String token = jwtService.getToken(request);
-                if (token == null || !jwtService.validateToken(token)) {
-                    throw new CredentialsException(MessageConstant.ERROR_INVALID_ACCESS_TOKEN);
+        try {
+            String token = jwtService.getToken(request);
+            if (token == null || !jwtService.validateToken(token)) {
+                if(SecurityUtil.isPublicAPI(request)){
+                    filterChain.doFilter(request, response);
+                    return;
                 }
-                Claims claims = jwtService.extractClaims(token);
-                String role = claims.get("role", String.class);
-                String id = claims.get("id", String.class);
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        id, null, Collections.singletonList(authority));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                filterChain.doFilter(request, response);
-            }catch (CredentialsException ex){
-                resolver.resolveException(request, response, null, ex);
+                throw new CredentialsException(MessageConstant.ERROR_INVALID_ACCESS_TOKEN);
             }
+            Claims claims = jwtService.extractClaims(token);
+            String role = claims.get("role", String.class);
+            String id = claims.get("id", String.class);
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    id, null, Collections.singletonList(authority));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+        }catch (CredentialsException ex){
+            resolver.resolveException(request, response, null, ex);
+        }
     }
 
     @Override
