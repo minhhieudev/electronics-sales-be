@@ -49,7 +49,7 @@ public class SecurityUtil {
 
     public static boolean isPublicAPI(HttpServletRequest request){
         String url = request.getRequestURI();
-        return "/api/categories".equals(url) && "GET".equalsIgnoreCase(request.getMethod());
+        return ("/api/categories".equals(url) || "/api/brands".equals(url)) && "GET".equalsIgnoreCase(request.getMethod());
     }
 }
 
