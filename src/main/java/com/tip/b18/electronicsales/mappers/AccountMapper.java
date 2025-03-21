@@ -6,7 +6,6 @@ import com.tip.b18.electronicsales.dto.AccountUpdateDTO;
 import com.tip.b18.electronicsales.dto.AccountsDTO;
 import com.tip.b18.electronicsales.entities.Account;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import org.springframework.data.domain.Page;
 
@@ -17,7 +16,5 @@ public interface AccountMapper {
     AccountDTO toDTO(Account account);
     List<AccountsDTO> toDTOList(Page<Account> accounts);
     AccountPersonalDTO toAccountPersonalDto(Account account);
-    
-    @Mapping(source = "avatarUrl", target = "avatarUrl")
     AccountUpdateDTO toAccountUpdateDto(Account account);
 }

@@ -2,7 +2,6 @@ package com.tip.b18.electronicsales.dto.base;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-
 import java.util.UUID;
 
 @Data

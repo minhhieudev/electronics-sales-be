@@ -39,12 +39,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<AccountDTO>> registerAccount(@RequestBody @Valid AccountRegisterDTO accountRegisterDTO){
-        AccountDTO account = accountService.registerAccount(accountRegisterDTO);
+        accountService.registerAccount(accountRegisterDTO);
 
         ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_ACCOUNT_REGISTERED);
-        responseDTO.setData(account);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 }

@@ -42,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO registerAccount(AccountRegisterDTO accountRegisterDTO) {
+    public void registerAccount(AccountRegisterDTO accountRegisterDTO) {
         accountRepository.findByUserName(accountRegisterDTO.getUserName())
                 .ifPresent(account -> {
                     throw new AlreadyExistsException(MessageConstant.ERROR_ACCOUNT_EXISTS);
@@ -56,13 +56,13 @@ public class AccountServiceImpl implements AccountService {
         account.setPassword(password);
         account.setRole(false);
 
-        return accountMapper.toDTO(accountRepository.save(account));
+        accountRepository.save(account);
     }
 
     @Override
     public CustomPage<AccountsDTO> viewAccounts(String search, int page, int limit) {
         Pageable pageable = PageRequest.of(page, limit);
-        org.springframework.data.domain.Page<Account> accounts = accountRepository.findByUserNameOrNumberPhone(search, pageable);
+        org.springframework.data.domain.Page<Account> accounts = accountRepository.findByUserNameOrPhoneNumber(search, pageable);
 
         PageInfoDTO pageInfoDTO = new PageInfoDTO();
         pageInfoDTO.setTotalPages(accounts.getTotalPages());
@@ -98,8 +98,8 @@ public class AccountServiceImpl implements AccountService {
         String fullName = accountUpdateDTO.getFullName();
         String address = accountUpdateDTO.getAddress();
         String email = accountUpdateDTO.getEmail();
-        String numberPhone = accountUpdateDTO.getNumberPhone();
-        LocalDate birthDay = accountUpdateDTO.getBirthDay();
+        String phoneNumber = accountUpdateDTO.getPhoneNumber();
+        LocalDate dateOfBirth = accountUpdateDTO.getDateOfBirth();
         boolean gender = accountUpdateDTO.isGender();
         String avatarUrl = accountUpdateDTO.getAvatarUrl();
 
@@ -120,15 +120,15 @@ public class AccountServiceImpl implements AccountService {
             account.setEmail(email);
             isChange = true;
         }
-        if(numberPhone != null && !numberPhone.equals(account.getNumberPhone())){
-            if(accountRepository.existsByNumberPhone(numberPhone)){
-                throw new AlreadyExistsException(MessageConstant.ERROR_NUMBERPHONE_EXISTS);
+        if(phoneNumber != null && !phoneNumber.equals(account.getPhoneNumber())){
+            if(accountRepository.existsByPhoneNumber(phoneNumber)){
+                throw new AlreadyExistsException(MessageConstant.ERROR_PHONE_NUMBER_EXISTS);
             }
-            account.setNumberPhone(numberPhone);
+            account.setPhoneNumber(phoneNumber);
             isChange = true;
         }
-        if(birthDay != null && !birthDay.equals((account.getBirthDay()))){
-            account.setBirthDay(birthDay);
+        if(dateOfBirth != null && !dateOfBirth.equals((account.getDateOfBirth()))){
+            account.setDateOfBirth(dateOfBirth);
             isChange = true;
         }
         if(gender != account.isGender()){

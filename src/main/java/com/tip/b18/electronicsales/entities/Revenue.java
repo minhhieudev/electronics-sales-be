@@ -3,7 +3,6 @@ package com.tip.b18.electronicsales.entities;
 import com.tip.b18.electronicsales.entities.base.BaseIdEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

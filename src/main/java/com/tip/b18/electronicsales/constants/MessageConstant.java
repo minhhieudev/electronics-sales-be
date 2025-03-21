@@ -11,7 +11,7 @@ public class MessageConstant {
     public static final String ERROR_INVALID_CREDENTIALS = "Tên đăng nhập hoặc mật khẩu không đúng";
     public static final String ERROR_ACCOUNT_EXISTS = "Tài khoản đã tồn tại";
     public static final String ERROR_EMAIL_EXISTS = "Email đã tồn tại";
-    public static final String ERROR_NUMBERPHONE_EXISTS = "Số điện thoại đã tồn tại";
+    public static final String ERROR_PHONE_NUMBER_EXISTS = "Số điện thoại đã tồn tại";
     public static final String ERROR_CATEGORY_NAME_EXISTS = "Thể loại đã tồn tại";
     public static final String ERROR_BRAND_NAME_EXISTS = "Thương hiệu đã tồn tại";
     public static final String ERROR_INVALID_PASSWORD = "Mật khẩu cũ không đúng";

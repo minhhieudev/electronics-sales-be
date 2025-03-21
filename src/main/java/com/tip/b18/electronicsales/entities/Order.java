@@ -1,17 +1,13 @@
 package com.tip.b18.electronicsales.entities;
 
-
-import com.tip.b18.electronicsales.entities.Account;
 import com.tip.b18.electronicsales.entities.base.BaseIdEntity;
 import com.tip.b18.electronicsales.enums.Delivery;
 import com.tip.b18.electronicsales.enums.PaymentMethod;
 import com.tip.b18.electronicsales.enums.Status;
 import jakarta.persistence.*;
-import jakarta.transaction.Transaction;
 import lombok.Data;
-
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "`order`")
@@ -43,5 +39,5 @@ public class Order extends BaseIdEntity {
     private Delivery delivery;
 
     @Column(name = "created_at", nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 }

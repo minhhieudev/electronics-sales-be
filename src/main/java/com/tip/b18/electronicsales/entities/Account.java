@@ -3,14 +3,13 @@ package com.tip.b18.electronicsales.entities;
 import com.tip.b18.electronicsales.entities.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Entity
 @Data
 public class Account extends BaseEntity {
-    @Column(name = "number_phone", unique = true, columnDefinition = "CHAR(10)")
-    private String numberPhone;
+    @Column(name = "phone_number", unique = true, columnDefinition = "CHAR(10)")
+    private String phoneNumber;
 
     @Column(name = "user_name", unique = true, columnDefinition = "CHAR(30)")
     private String userName;
@@ -31,8 +30,8 @@ public class Account extends BaseEntity {
 
     private boolean gender;
 
-    @Column(name = "birth_day")
-    private LocalDate birthDay;
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
     @Column(name = "avatar_url", columnDefinition = "TEXT")
     private String avatarUrl;

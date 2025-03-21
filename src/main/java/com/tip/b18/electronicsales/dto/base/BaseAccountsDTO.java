@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public abstract class BaseAccountsDTO extends BaseAccountDTO{
     private boolean gender;
-    private String numberPhone;
+    private String phoneNumber;
 }

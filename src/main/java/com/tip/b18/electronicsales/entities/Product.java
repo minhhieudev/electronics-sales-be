@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
-
 import java.math.BigDecimal;
 
 @Entity
@@ -42,6 +41,6 @@ public class Product extends BaseEntity {
 
     private int warranty;
 
-    @Column(name = "main_image", nullable = false, columnDefinition = "TEXT")
-    private String mainImage;
+    @Column(name = "main_image_url", nullable = false, columnDefinition = "TEXT")
+    private String mainImageUrl;
 }
