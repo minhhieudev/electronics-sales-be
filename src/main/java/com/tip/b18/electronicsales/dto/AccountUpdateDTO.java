@@ -10,6 +10,6 @@ public class AccountUpdateDTO {
       private String phoneNumber;
       private LocalDate dateOfBirth;
       private String address;
-      private boolean gender;
+      private Boolean gender;
       private String avatarUrl;
 }

@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,6 +55,7 @@ public class AccountServiceImpl implements AccountService {
         account.setUserName(accountRegisterDTO.getUserName());
         account.setPassword(password);
         account.setRole(false);
+        account.setGender(null);
 
         accountRepository.save(account);
     }
@@ -100,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
         String email = accountUpdateDTO.getEmail();
         String phoneNumber = accountUpdateDTO.getPhoneNumber();
         LocalDate dateOfBirth = accountUpdateDTO.getDateOfBirth();
-        boolean gender = accountUpdateDTO.isGender();
+        Boolean gender = accountUpdateDTO.getGender();
         String avatarUrl = accountUpdateDTO.getAvatarUrl();
 
         boolean isChange = false;
@@ -109,33 +110,33 @@ public class AccountServiceImpl implements AccountService {
             account.setFullName(fullName);
             isChange = true;
         }
-        if(address != null && !address.equals(account.getAddress())){
+        if(!Objects.equals(address, account.getAddress())){
             account.setAddress(address);
             isChange = true;
         }
-        if(email != null && !email.equals(account.getEmail())){
-            if(accountRepository.existsByEmail(email)){
+        if(!Objects.equals(email, account.getEmail())){
+            if(email != null && accountRepository.existsByEmail(email)){
                 throw new AlreadyExistsException(MessageConstant.ERROR_EMAIL_EXISTS);
             }
             account.setEmail(email);
             isChange = true;
         }
-        if(phoneNumber != null && !phoneNumber.equals(account.getPhoneNumber())){
-            if(accountRepository.existsByPhoneNumber(phoneNumber)){
+        if(!Objects.equals(phoneNumber, account.getPhoneNumber())){
+            if(phoneNumber != null && accountRepository.existsByPhoneNumber(phoneNumber)){
                 throw new AlreadyExistsException(MessageConstant.ERROR_PHONE_NUMBER_EXISTS);
             }
             account.setPhoneNumber(phoneNumber);
             isChange = true;
         }
-        if(dateOfBirth != null && !dateOfBirth.equals((account.getDateOfBirth()))){
+        if(!Objects.equals(dateOfBirth, account.getDateOfBirth())){
             account.setDateOfBirth(dateOfBirth);
             isChange = true;
         }
-        if(gender != account.isGender()){
+        if(!Objects.equals(gender, account.getGender())){
             account.setGender(gender);
             isChange = true;
         }
-        if(avatarUrl != null && !avatarUrl.equals(account.getAvatarUrl())){
+        if(!Objects.equals(avatarUrl, account.getAvatarUrl())){
             account.setAvatarUrl(avatarUrl);
             isChange = true;
         }

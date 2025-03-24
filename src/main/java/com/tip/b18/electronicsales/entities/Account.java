@@ -28,7 +28,7 @@ public class Account extends BaseEntity {
     @Column(name = "address", columnDefinition = "VARCHAR(100)")
     private String address;
 
-    private boolean gender;
+    private Boolean gender;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;

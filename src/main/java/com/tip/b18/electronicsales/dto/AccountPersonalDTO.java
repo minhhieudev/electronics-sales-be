@@ -4,6 +4,4 @@ import lombok.Data;
 
 @Data
 public class AccountPersonalDTO extends AccountDTO{
-    private String phoneNumber;
-    private boolean gender;
 }
