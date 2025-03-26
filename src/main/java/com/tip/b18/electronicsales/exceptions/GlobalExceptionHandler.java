@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseDTO);
     }
 
-    @ExceptionHandler(value = AlreadyExistsException.class)
-    ResponseEntity<ResponseDTO<?>> handlingAlreadyExistsException(Exception e){
+    @ExceptionHandler({IntegrityConstraintViolationException.class, AlreadyExistsException.class})
+    ResponseEntity<ResponseDTO<?>> handleConflictRequest(Exception e){
         ResponseDTO<?> responseDTO = errorResponse(e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(responseDTO);
     }
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDTO);
     }
 
-    @ExceptionHandler({IntegrityConstraintViolationException.class, InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ResponseDTO<?>> handleBadRequest(Exception e) {
         String message;
         if (e instanceof MethodArgumentNotValidException) {

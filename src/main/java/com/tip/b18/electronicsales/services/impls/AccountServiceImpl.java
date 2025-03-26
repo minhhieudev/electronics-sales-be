@@ -2,10 +2,7 @@ package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.dto.*;
 import com.tip.b18.electronicsales.entities.Account;
-import com.tip.b18.electronicsales.exceptions.AlreadyExistsException;
-import com.tip.b18.electronicsales.exceptions.InvalidPasswordException;
-import com.tip.b18.electronicsales.exceptions.NotFoundException;
-import com.tip.b18.electronicsales.exceptions.CredentialsException;
+import com.tip.b18.electronicsales.exceptions.*;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.mappers.AccountMapper;
 import com.tip.b18.electronicsales.repositories.AccountRepository;
@@ -13,6 +10,7 @@ import com.tip.b18.electronicsales.services.AccountService;
 import com.tip.b18.electronicsales.services.PasswordService;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -149,10 +147,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccount(UUID id) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT));
-
-        accountRepository.delete(account);
+        try {
+            Account account = accountRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT));
+            accountRepository.delete(account);
+        }catch (DataIntegrityViolationException e){
+            throw new IntegrityConstraintViolationException(MessageConstant.ERROR_ACCOUNT_HAS_ORDERS);
+        }
     }
 
     @Override
