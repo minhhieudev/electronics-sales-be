@@ -3,7 +3,6 @@ package com.tip.b18.electronicsales.configurations;
 import com.tip.b18.electronicsales.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,8 +21,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "api/products",
-                                "api/brands",
+                                "/api/products/**",
+                                "/api/brands",
                                 "/api/categories",
                                 "/api/auth/**",
                                 "/swagger-ui/**",

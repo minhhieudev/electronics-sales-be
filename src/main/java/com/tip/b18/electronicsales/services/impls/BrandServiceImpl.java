@@ -102,4 +102,10 @@ public class BrandServiceImpl implements BrandService {
             brandRepository.save(brand);
         }
     }
+
+    @Override
+    public Brand getBrandById(UUID id) {
+        return brandRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_BRAND));
+    }
 }

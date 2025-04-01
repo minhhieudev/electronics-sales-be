@@ -6,4 +6,7 @@ import java.util.UUID;
 
 public interface ProductService {
     CustomPage<ProductDTO> viewProducts(String search, int page, int limit, UUID categoryId, UUID brandId, String orderBy);
+    ProductDTO viewProductDetails(UUID id);
+    void addProduct(ProductDTO productDTO);
+    void deleteProduct(UUID id);
 }

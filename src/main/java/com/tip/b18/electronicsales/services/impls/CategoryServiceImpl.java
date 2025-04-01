@@ -101,4 +101,10 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.save(category);
         }
     }
+
+    @Override
+    public Category getCategoryById(UUID id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_CATEGORY));
+    }
 }

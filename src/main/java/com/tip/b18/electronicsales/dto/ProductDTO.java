@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -24,4 +25,8 @@ public class ProductDTO {
     private BigDecimal discountPrice;
     private Integer quantitySold;
     private String mainImageUrl;
+    private Integer warranty;
+    private String description;
+    private List<String> colors;
+    private List<String> images;
 }

@@ -49,7 +49,7 @@ public class AccountController {
     }
 
     @PutMapping("/personal")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseDTO<AccountUpdateDTO> updatePersonalAccount(@RequestBody @Valid AccountUpdateDTO accountDTORequest){
         AccountUpdateDTO accountUpdateDTO = accountService.updatePersonalAccount(accountDTORequest);
 

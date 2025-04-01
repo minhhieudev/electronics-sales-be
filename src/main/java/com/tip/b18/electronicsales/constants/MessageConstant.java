@@ -14,14 +14,18 @@ public class MessageConstant {
     public static final String ERROR_PHONE_NUMBER_EXISTS = "Số điện thoại đã tồn tại";
     public static final String ERROR_CATEGORY_NAME_EXISTS = "Thể loại đã tồn tại";
     public static final String ERROR_BRAND_NAME_EXISTS = "Thương hiệu đã tồn tại";
+    public static final String ERROR_PRODUCT_EXISTS = "Sản phẩm đã tồn tại";
     public static final String ERROR_INVALID_PASSWORD = "Mật khẩu cũ không đúng";
     public static final String ERROR_INVALID_ACCESS_TOKEN = "Token không hợp lệ";
     public static final String ERROR_ACCESS_DENIED = "Bạn không có quyền truy cập vào tài nguyên này";
     public static final String ERROR_NOT_FOUND_ACCOUNT = "Không tìm thấy tài khoản";
     public static final String ERROR_NOT_FOUND_CATEGORY = "Không tìm thấy thể loại";
     public static final String ERROR_NOT_FOUND_BRAND = "Không tìm thấy thương hiệu";
+    public static final String ERROR_NOT_FOUND_PRODUCT = "Không tìm thấy sản phẩm";
     public static final String ERROR_ACCOUNT_HAS_ORDERS = "Xóa các đơn hàng liên quan trước khi xóa tài khoản";
     public static final String ERROR_CATEGORY_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thể loại";
     public static final String ERROR_BRAND_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thương hiệu";
     public static final String INVALID_UUID = "Sai định dạng UUID";
+    public static final String INVALID_FIELD_FORMAT = "Trường %s không đúng kiểu dữ liệu";
+    public static final String INVALID_JSON_FORMAT = "Dữ liệu JSON không hợp lệ";
 }

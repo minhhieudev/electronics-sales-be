@@ -1,11 +1,15 @@
 package com.tip.b18.electronicsales.exceptions;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.ResponseDTO;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 import java.util.Objects;
 
 @Hidden
@@ -42,16 +47,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDTO);
     }
 
-    @ExceptionHandler({InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class ,IllegalArgumentException.class, InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ResponseDTO<?>> handleBadRequest(Exception e) {
-        String message;
+        String message = null;
         if (e instanceof MethodArgumentNotValidException) {
             message = Objects.requireNonNull(((MethodArgumentNotValidException) e).getFieldError()).getDefaultMessage();
         } else if(e instanceof MissingServletRequestParameterException){
             message = MessageConstant.ERROR_VALUE_REQUIRED;
-        } else if(e instanceof MethodArgumentTypeMismatchException){
+        } else if(e instanceof MethodArgumentTypeMismatchException || e instanceof IllegalArgumentException){
             message = MessageConstant.INVALID_UUID;
-        } else{
+        } else if(e instanceof HttpMessageNotReadableException){
+            Throwable cause = e.getCause();
+            if(cause instanceof InvalidFormatException invalidFormatException){
+                List<JsonMappingException.Reference> path = invalidFormatException.getPath();
+                if (!path.isEmpty()) {
+                    String fieldName = path.get(0).getFieldName();
+                    message = String.format(MessageConstant.INVALID_FIELD_FORMAT, fieldName);
+                }
+            }else{
+                message = MessageConstant.INVALID_JSON_FORMAT;
+            }
+        } else {
             message = e.getMessage();
         }
         ResponseDTO<?> responseDTO = errorResponse(message);
