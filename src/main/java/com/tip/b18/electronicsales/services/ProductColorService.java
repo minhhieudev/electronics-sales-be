@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface ProductColorService {
     void addProductColors(List<Color> colorList, Product product);
-    List<Color> getProductColors(UUID id);
+    List<Color> getColorsByProductColors(List<UUID> productIdList);
     void deleteProductColors(List<ProductColor> productColorList);
+    void updateProductColorsByProductId(List<String> color, Product product);
 }

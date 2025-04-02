@@ -18,6 +18,6 @@ public interface ProductColorRepository extends JpaRepository<ProductColor, UUID
             "WHERE pcCount.color = pc.color " +
             "GROUP BY pcCount.color) AS quantity " +
             "FROM ProductColor pc " +
-            "WHERE pc.product.id = :id")
-    List<Tuple> findAllByProductId(@Param("id") UUID id);
+            "WHERE pc.product.id IN :productIdList")
+    List<Tuple> findAllByProductIds(@Param("productIdList") List<UUID> productIdList);
 }

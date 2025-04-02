@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,8 +21,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             "LEFT JOIN Image i ON i.product.id = p.id " +
             "LEFT JOIN ProductColor pc ON pc.product.id = p.id " +
             "LEFT JOIN Color c ON c.id = pc.color.id " +
-            "WHERE p.id = :id")
+            "WHERE p.id = :id AND p.isDeleted = false")
     List<Tuple> findProductById(@Param("id") UUID id);
-
-    boolean existsBySku(String sku);
+    Product findByIdAndIsDeleted(UUID id, boolean isDeleted);
+    boolean existsBySkuAndIsDeleted(String sku, boolean isDeleted);
+    List<Product> findByIsDeletedTrueAndDeletedAtBefore(LocalDateTime time);
 }

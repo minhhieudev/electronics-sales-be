@@ -16,9 +16,14 @@ import com.tip.b18.electronicsales.utils.SecurityUtil;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -88,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void addProduct(ProductDTO productDTO) {
-        if(productRepository.existsBySku(productDTO.getSku())){
+        if(productRepository.existsBySkuAndIsDeleted(productDTO.getSku(), false)){
             throw new AlreadyExistsException(MessageConstant.ERROR_PRODUCT_EXISTS);
         }
 
@@ -112,15 +117,117 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProduct(UUID id) {
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT)
-        );
+        Product product = productRepository.findByIdAndIsDeleted(id, false);
+        if(product == null){
+            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT);
+        }
+        product.setDeleted(true);
+        product.setDeletedAt(LocalDateTime.now());
+        productRepository.save(product);
+    }
 
-        imageService.deleteImages(product.getId());
+    @Override
+    @Transactional
+    public void updateProduct(UUID id, ProductDTO productDTO) {
+        Product product = productRepository.findByIdAndIsDeleted(id, false);
+        if(product == null){
+            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT);
+        }
 
-        List<Color> colorList = productColorService.getProductColors(product.getId());
+        boolean isChange = false;
+
+        if(productDTO.getSku() != null && !productDTO.getSku().equals(product.getSku())){
+            if(productRepository.existsBySkuAndIsDeleted(productDTO.getSku(), false)){
+                throw new AlreadyExistsException(MessageConstant.ERROR_PRODUCT_EXISTS);
+            }
+
+            product.setSku(productDTO.getSku());
+            isChange = true;
+        }
+
+        if(productDTO.getName() != null && !productDTO.getName().equals(product.getName())){
+            product.setName(productDTO.getName());
+            isChange = true;
+        }
+
+        if(productDTO.getStock() != null && !productDTO.getStock().equals(product.getStock())){
+            product.setStock(productDTO.getStock());
+            isChange = true;
+        }
+
+        if(productDTO.getPrice() != null && !productDTO.getPrice().equals(product.getPrice())){
+            product.setPrice(productDTO.getPrice());
+            isChange = true;
+        }
+
+        if(productDTO.getDiscount() != null && !productDTO.getDiscount().equals(product.getDiscount())){
+            BigDecimal discountPrice = BigDecimalUtil.calculateDiscountPrice(product.getPrice(), productDTO.getDiscount());
+            if(discountPrice != null && !discountPrice.equals(product.getDiscountPrice())){
+                product.setDiscountPrice(discountPrice);
+            }
+            product.setDiscount(productDTO.getDiscount());
+            isChange = true;
+        }
+
+        if(productDTO.getDescription() != null && !productDTO.getDescription().equals(product.getDescription())){
+            product.setDescription(productDTO.getDescription());
+            isChange = true;
+        }
+
+        if(productDTO.getWarranty() != null && !productDTO.getWarranty().equals(product.getWarranty())){
+            product.setWarranty(productDTO.getWarranty());
+            isChange = true;
+        }
+
+        if(productDTO.getMainImageUrl() != null && !productDTO.getMainImageUrl().equals(product.getMainImageUrl())){
+            product.setMainImageUrl(productDTO.getMainImageUrl());
+            isChange = true;
+        }
+
+        if(productDTO.getCategory() != null){
+            Category category = categoryService.getCategoryById(UUID.fromString(productDTO.getCategory()));
+            if(productDTO.getCategory() != null && !category.equals(product.getCategory())){
+                product.setCategory(category);
+                isChange = true;
+            }
+        }
+
+        if(productDTO.getBrand() != null){
+            Brand brand = brandService.getBrandById(UUID.fromString(productDTO.getBrand()));
+            if(brand != null && !brand.equals(product.getBrand())){
+                product.setBrand(brand);
+                isChange = true;
+            }
+        }
+
+        if(productDTO.getImages() != null && !productDTO.getImages().isEmpty()){
+            imageService.updateImagesByProductId(product, productDTO.getImages());
+        }
+
+        if(productDTO.getColors() != null && !productDTO.getColors().isEmpty()){
+            productColorService.updateProductColorsByProductId(productDTO.getColors(), product);
+        }
+
+        if(isChange){
+            productRepository.save(product);
+        }
+    }
+
+    @Override
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 24 * 7)
+    @Transactional
+    public void scheduledProductCleanup() {
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+        List<Product> products = productRepository.findByIsDeletedTrueAndDeletedAtBefore(sevenDaysAgo);
+
+        List<UUID> productIdList = new ArrayList<>();
+        for (Product product : products){
+            productIdList.add(product.getId());
+        }
+
+        imageService.deleteImages(productIdList);
+        List<Color> colorList = productColorService.getColorsByProductColors(productIdList);
         colorService.deleteColors(colorList);
-
-        productRepository.delete(product);
+        productRepository.deleteAll(products);
     }
 }

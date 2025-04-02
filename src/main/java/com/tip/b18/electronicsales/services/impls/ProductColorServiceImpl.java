@@ -4,19 +4,21 @@ import com.tip.b18.electronicsales.entities.Color;
 import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.entities.ProductColor;
 import com.tip.b18.electronicsales.repositories.ProductColorRepository;
+import com.tip.b18.electronicsales.services.ColorService;
 import com.tip.b18.electronicsales.services.ProductColorService;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductColorServiceImpl implements ProductColorService {
     private final ProductColorRepository productColorRepository;
+    private final ColorService colorService;
 
     @Override
     public void addProductColors(List<Color> colorList, Product product) {
@@ -32,11 +34,11 @@ public class ProductColorServiceImpl implements ProductColorService {
     }
 
     @Override
-    public List<Color> getProductColors(UUID id) {
-        List<Tuple> tupleList = productColorRepository.findAllByProductId(id);
+    public List<Color> getColorsByProductColors(List<UUID> productIdList) {
+        List<Tuple> tuples = productColorRepository.findAllByProductIds(productIdList);
         List<Color> colorList = new ArrayList<>();
         List<ProductColor> productColorList = new ArrayList<>();
-        for (Tuple tuple : tupleList){
+        for (Tuple tuple : tuples){
             ProductColor productColor = tuple.get("productColor", ProductColor.class);
             productColorList.add(productColor);
 
@@ -52,5 +54,52 @@ public class ProductColorServiceImpl implements ProductColorService {
     @Override
     public void deleteProductColors(List<ProductColor> productColorList) {
         productColorRepository.deleteAll(productColorList);
+    }
+
+    @Override
+    public void updateProductColorsByProductId(List<String> colors, Product product) {
+        List<Tuple> tupleList = productColorRepository.findAllByProductIds(List.of(product.getId()));
+        List<Color> colorListToDelete = new ArrayList<>();
+        List<ProductColor> productColorList = new ArrayList<>();
+        Set<String> existingColorsLowerCase = new HashSet<>();
+        Set<String> colorsSet = new HashSet<>(colors);
+
+        for(Tuple tuple : tupleList){
+            ProductColor productColor = tuple.get("productColor", ProductColor.class);
+            productColorList.add(productColor);
+
+            existingColorsLowerCase.add(productColor.getColor().getColor().toLowerCase());
+
+            if(!colorsSet.contains(productColor.getColor().getColor())){
+                if((Long)tuple.get(1) < 2){
+                    Color color = productColor.getColor();
+                    colorListToDelete.add(color);
+                }
+            }
+        }
+
+        List<ProductColor> productColorsToDelete = productColorList
+                .stream()
+                .filter(e -> !colorsSet.contains(e.getColor().getColor()))
+                .toList();
+
+        List<String> colorsToSave = colors
+                .stream()
+                .filter(color -> !existingColorsLowerCase.contains(color.toLowerCase()))
+                .toList();
+
+        List<Color> colorList = new ArrayList<>();
+        if(!colorsToSave.isEmpty()){
+            colorList = colorService.addNewColor(colorsToSave);
+        }
+        if(!colorList.isEmpty()){
+            addProductColors(colorList, product);
+        }
+        if(!productColorsToDelete.isEmpty()){
+            deleteProductColors(productColorsToDelete);
+        }
+        if(!colorListToDelete.isEmpty()){
+            colorService.deleteColors(colorListToDelete);
+        }
     }
 }

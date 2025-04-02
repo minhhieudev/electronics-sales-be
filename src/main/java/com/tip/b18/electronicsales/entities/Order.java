@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @Table(name = "`order`")
 @Data
 public class Order extends BaseIdEntity {
+    @Column(name = "order_code", unique = true)
+    private String orderCode;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
@@ -22,6 +25,12 @@ public class Order extends BaseIdEntity {
 
     @Column(name = "fee_delivery", precision = 10, scale = 2, nullable = false)
     private BigDecimal feeDelivery;
+
+    @Column(name = "phone_number", columnDefinition = "CHAR(10)")
+    private String phoneNumber;
+
+    @Column(name = "full_name", columnDefinition = "VARCHAR(50)")
+    private String fullName;
 
     @Column(name = "address", nullable = false, columnDefinition = "VARCHAR(100)")
     private String address;

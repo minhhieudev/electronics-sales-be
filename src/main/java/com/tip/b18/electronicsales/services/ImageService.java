@@ -6,5 +6,8 @@ import java.util.UUID;
 
 public interface ImageService {
     void addImages(List<String> images, Product product);
-    void deleteImages(UUID id);
+    void deleteImages(List<UUID> productIdList);
+    List<String> getImagesByProductId(UUID productId);
+    void deleteImagesByProductId(UUID productId, List<String> urls);
+    void updateImagesByProductId(Product product, List<String> images);
 }

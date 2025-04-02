@@ -9,4 +9,6 @@ public interface ProductService {
     ProductDTO viewProductDetails(UUID id);
     void addProduct(ProductDTO productDTO);
     void deleteProduct(UUID id);
+    void updateProduct(UUID id, ProductDTO productDTO);
+    void scheduledProductCleanup();
 }

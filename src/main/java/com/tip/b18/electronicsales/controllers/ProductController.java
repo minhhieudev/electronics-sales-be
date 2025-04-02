@@ -71,4 +71,16 @@ public class ProductController {
 
         return responseDTO;
     }
+
+    @PutMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseDTO<?> updateProduct(@RequestParam("id") @Valid UUID id, @RequestBody @Valid ProductDTO productDTO){
+        productService.updateProduct(id, productDTO);
+
+        ResponseDTO<ProductDTO> responseDTO = new ResponseDTO<>();
+        responseDTO.setStatus("success");
+        responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
+
+        return responseDTO;
+    }
 }

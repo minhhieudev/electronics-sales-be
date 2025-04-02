@@ -104,6 +104,7 @@ public class ProductCriteria {
         if (brandId != null && isAdmin) {
             predicates.add(cb.equal(root.get("brand").get("id"), brandId));
         }
+        predicates.add(cb.equal(root.get("isDeleted"), false));
         return predicates;
     }
 
