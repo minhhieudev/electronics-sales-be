@@ -12,7 +12,7 @@ public class CorsConfig {
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://electronics-sales.vercel.app/", "http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
