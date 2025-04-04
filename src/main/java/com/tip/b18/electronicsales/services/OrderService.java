@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface OrderService {
     CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery);
     OrderDTO viewOrderDetails(UUID id);
+    OrderDTO createOrder(OrderDTO orderDTO);
+    void updateOrder(OrderDTO orderDTO);
 }

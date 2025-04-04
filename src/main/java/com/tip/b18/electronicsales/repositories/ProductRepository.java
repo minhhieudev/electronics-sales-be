@@ -26,4 +26,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Product findByIdAndIsDeleted(UUID id, boolean isDeleted);
     boolean existsBySkuAndIsDeleted(String sku, boolean isDeleted);
     List<Product> findByIsDeletedTrueAndDeletedAtBefore(LocalDateTime time);
+    List<Product> findAllByIdInAndIsDeleted(List<UUID> uuidList, boolean isDeleted);
 }

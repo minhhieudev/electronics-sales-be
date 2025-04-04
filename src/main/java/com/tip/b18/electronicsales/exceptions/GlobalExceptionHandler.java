@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDTO);
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class ,IllegalArgumentException.class, InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({IllegalStateException.class, InsufficientStockException.class, HttpMessageNotReadableException.class ,IllegalArgumentException.class, InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ResponseDTO<?>> handleBadRequest(Exception e) {
         String message = null;
         if (e instanceof MethodArgumentNotValidException) {

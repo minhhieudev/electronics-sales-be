@@ -180,4 +180,9 @@ public class AccountServiceImpl implements AccountService {
             accountRepository.save(account);
         }
     }
+
+    @Override
+    public Account findById(UUID id) {
+        return accountRepository.findById(id).orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT));
+    }
 }

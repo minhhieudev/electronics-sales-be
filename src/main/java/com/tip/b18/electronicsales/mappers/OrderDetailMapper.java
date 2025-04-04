@@ -1,7 +1,9 @@
 package com.tip.b18.electronicsales.mappers;
 
 import com.tip.b18.electronicsales.dto.OrderDetailDTO;
+import com.tip.b18.electronicsales.entities.Order;
 import com.tip.b18.electronicsales.entities.OrderDetail;
+import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
 import org.mapstruct.Mapper;
 import java.util.List;
@@ -31,5 +33,31 @@ public interface OrderDetailMapper {
                     return builder.build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    default OrderDetail toOrderDetail(Order order, OrderDetailDTO orderDetailDTO, Product product){
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrder(order);
+        orderDetail.setColor(orderDetailDTO.getColor());
+        orderDetail.setQuantity(orderDetailDTO.getQuantity());
+        orderDetail.setPriceAtTime(orderDetailDTO.getPriceAtTime());
+        orderDetail.setTotalPrice(orderDetailDTO.getTotalPrice());
+        orderDetail.setProduct(product);
+
+        return orderDetail;
+    }
+
+    default List<OrderDetailDTO> createOrderDetailResponse(List<OrderDetail> orderDetails){
+        return orderDetails
+                .stream()
+                .map(orderDetail -> OrderDetailDTO
+                        .builder()
+                        .id(orderDetail.getId())
+                        .name(orderDetail.getProduct().getName())
+                        .quantity(orderDetail.getQuantity())
+                        .mainImageUrl(orderDetail.getProduct().getMainImageUrl())
+                        .color(orderDetail.getColor())
+                        .build())
+                .toList();
     }
 }

@@ -27,7 +27,7 @@ public class JwtServiceImpl implements JwtService {
         return Jwts.builder()
                 .setSubject(user_name)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .claim("role", role ? "ADMIN" : "USER")
                 .claim("id", accountId)

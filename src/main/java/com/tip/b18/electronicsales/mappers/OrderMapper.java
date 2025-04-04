@@ -2,7 +2,9 @@ package com.tip.b18.electronicsales.mappers;
 
 import com.tip.b18.electronicsales.dto.OrderDTO;
 import com.tip.b18.electronicsales.dto.OrderDetailDTO;
+import com.tip.b18.electronicsales.entities.Account;
 import com.tip.b18.electronicsales.entities.Order;
+import com.tip.b18.electronicsales.enums.Status;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
@@ -49,6 +51,16 @@ public interface OrderMapper {
                 }).collect(Collectors.toList());
     }
 
+    default OrderDTO createOrderResponse(Order order, List<OrderDetailDTO> detailDTOList){
+        return OrderDTO
+                .builder()
+                .id(order.getId())
+                .orderCode(order.getOrderCode())
+                .totalPrice(order.getTotalPrice())
+                .items(detailDTOList)
+                .build();
+    }
+
     default OrderDTO toOrderDTO(Order order, List<OrderDetailDTO> detailDTOList){
         List<OrderDetailDTO> orderDetails = detailDTOList.stream()
                 .peek(orderDetail -> orderDetail.setOrderId(null))
@@ -69,5 +81,21 @@ public interface OrderMapper {
             builder.fullName(order.getFullName());
         }
         return builder.build();
+    }
+
+    default Order toOrder(OrderDTO orderDTO, String orderCode, Account account){
+        Order order = new Order();
+        order.setOrderCode(orderCode);
+        order.setAccount(account);
+        order.setFullName(orderDTO.getFullName());
+        order.setPhoneNumber(orderDTO.getPhoneNumber());
+        order.setAddress(orderDTO.getAddress());
+        order.setFeeDelivery(orderDTO.getFeeDelivery());
+        order.setTotalPrice(orderDTO.getTotalPrice());
+        order.setStatus(Status.PENDING);
+        order.setPaymentMethod(orderDTO.getPaymentMethod());
+        order.setDelivery(orderDTO.getDelivery());
+
+        return order;
     }
 }

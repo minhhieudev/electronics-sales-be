@@ -22,10 +22,13 @@ public class MessageConstant {
     public static final String ERROR_NOT_FOUND_CATEGORY = "Không tìm thấy thể loại";
     public static final String ERROR_NOT_FOUND_BRAND = "Không tìm thấy thương hiệu";
     public static final String ERROR_NOT_FOUND_PRODUCT = "Không tìm thấy sản phẩm";
+    public static final String ERROR_NOT_FOUND_ORDER = "Không tìm thấy hóa đơn";
     public static final String ERROR_ACCOUNT_HAS_ORDERS = "Xóa các đơn hàng liên quan trước khi xóa tài khoản";
     public static final String ERROR_CATEGORY_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thể loại";
     public static final String ERROR_BRAND_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thương hiệu";
     public static final String INVALID_UUID = "Sai định dạng UUID";
     public static final String INVALID_FIELD_FORMAT = "Trường %s không đúng kiểu dữ liệu";
     public static final String INVALID_JSON_FORMAT = "Dữ liệu JSON không hợp lệ";
+    public static final String ERROR_INSUFFICIENT_STOCK = "Số lượng hàng tồn kho của sản phẩm %s không đủ";
+    public static final String ERROR_UPDATE_ORDER = "Không thể cập nhật đơn hàng! Đơn hàng đã %s";
 }

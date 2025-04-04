@@ -1,5 +1,6 @@
 package com.tip.b18.electronicsales.controllers;
 
+import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.CustomPage;
 import com.tip.b18.electronicsales.dto.OrderDTO;
 import com.tip.b18.electronicsales.dto.ResponseDTO;
@@ -10,12 +11,12 @@ import com.tip.b18.electronicsales.services.OrderService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -50,6 +51,28 @@ public class OrderController {
         ResponseDTO<OrderDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setData(orderService.viewOrderDetails(id));
+
+        return responseDTO;
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<ResponseDTO<OrderDTO>> createOrder(@RequestBody @Valid OrderDTO orderDTO){
+        ResponseDTO<OrderDTO> responseDTO = new ResponseDTO<>();
+        responseDTO.setStatus("success");
+        responseDTO.setData(orderService.createOrder(orderDTO));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @PatchMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public ResponseDTO<OrderDTO> updateOrder(@RequestBody @Valid OrderDTO orderDTO){
+        orderService.updateOrder(orderDTO);
+
+        ResponseDTO<OrderDTO> responseDTO = new ResponseDTO<>();
+        responseDTO.setStatus("success");
+        responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
 
         return responseDTO;
     }

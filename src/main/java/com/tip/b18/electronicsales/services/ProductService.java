@@ -1,7 +1,11 @@
 package com.tip.b18.electronicsales.services;
 
 import com.tip.b18.electronicsales.dto.CustomPage;
+import com.tip.b18.electronicsales.dto.OrderDetailDTO;
 import com.tip.b18.electronicsales.dto.ProductDTO;
+import com.tip.b18.electronicsales.entities.Product;
+
+import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
@@ -11,4 +15,6 @@ public interface ProductService {
     void deleteProduct(UUID id);
     void updateProduct(UUID id, ProductDTO productDTO);
     void scheduledProductCleanup();
+    void updateStockProducts(List<OrderDetailDTO> detailDTOList);
+    List<Product> findProductsById(List<OrderDetailDTO> orderDetailDTOList);
 }

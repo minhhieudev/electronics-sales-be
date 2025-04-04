@@ -1,6 +1,7 @@
 package com.tip.b18.electronicsales.services;
 
 import com.tip.b18.electronicsales.dto.*;
+import com.tip.b18.electronicsales.entities.Account;
 
 import java.util.UUID;
 
@@ -12,4 +13,5 @@ public interface AccountService {
     AccountUpdateDTO updatePersonalAccount(AccountUpdateDTO accountUpdateDTO);
     void deleteAccount(UUID id);
     void changePassword(UpdatePasswordDTO updatePasswordDTO);
+    Account findById(UUID id);
 }

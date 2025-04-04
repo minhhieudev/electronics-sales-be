@@ -2,10 +2,12 @@ package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.CustomPage;
+import com.tip.b18.electronicsales.dto.OrderDetailDTO;
 import com.tip.b18.electronicsales.dto.PageInfoDTO;
 import com.tip.b18.electronicsales.dto.ProductDTO;
 import com.tip.b18.electronicsales.entities.*;
 import com.tip.b18.electronicsales.exceptions.AlreadyExistsException;
+import com.tip.b18.electronicsales.exceptions.InsufficientStockException;
 import com.tip.b18.electronicsales.exceptions.NotFoundException;
 import com.tip.b18.electronicsales.mappers.ProductMapper;
 import com.tip.b18.electronicsales.mappers.TupleMapper;
@@ -16,16 +18,16 @@ import com.tip.b18.electronicsales.utils.SecurityUtil;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -229,5 +231,42 @@ public class ProductServiceImpl implements ProductService {
         List<Color> colorList = productColorService.getColorsByProductColors(productIdList);
         colorService.deleteColors(colorList);
         productRepository.deleteAll(products);
+    }
+
+    @Override
+    public void updateStockProducts(List<OrderDetailDTO> orderDetailDTOList) {
+        List<UUID> uuidList = orderDetailDTOList
+                .stream()
+                .map(OrderDetailDTO::getId)
+                .toList();
+
+        List<Product> products = productRepository.findAllByIdInAndIsDeleted(uuidList, false);
+
+        Map<UUID, Integer> map = orderDetailDTOList
+                .stream()
+                .collect(Collectors.toMap(OrderDetailDTO::getId, OrderDetailDTO::getQuantity));
+
+        List<Product> productListToUpdate = products
+                .stream()
+                .filter(product -> map.containsKey(product.getId()))
+                .peek(product -> {
+                    int quantity = map.get(product.getId());
+                    if(product.getStock() < quantity){
+                        throw new InsufficientStockException(String.format(MessageConstant.ERROR_INSUFFICIENT_STOCK, product.getName()));
+                    }
+                    product.setStock(product.getStock() - quantity);
+                })
+                .toList();
+        productRepository.saveAll(productListToUpdate);
+    }
+
+    @Override
+    public List<Product> findProductsById(List<OrderDetailDTO> orderDetailDTOList) {
+        List<UUID> uuidList = orderDetailDTOList
+                .stream()
+                .map(OrderDetailDTO::getId)
+                .toList();
+
+        return productRepository.findAllByIdInAndIsDeleted(uuidList, false);
     }
 }

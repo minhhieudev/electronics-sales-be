@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @AllArgsConstructor
 public enum Status {
-    PENDING("Pending"),
-    SHIPPING("Shipping"),
-    COMPLETED("Completed"),
-    CANCELED("Canceled");
+    PENDING("chờ xử lý"),
+    SHIPPING("vận chuyển"),
+    COMPLETED("hoàn thành"),
+    CANCELED("hủy");
 
     private final String displayName;
 }

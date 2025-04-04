@@ -22,6 +22,7 @@ public class OrderDTO {
     private Status status;
     private PaymentMethod paymentMethod;
     private Delivery delivery;
+    private BigDecimal feeDelivery;
     private BigDecimal totalPrice;
     private List<OrderDetailDTO> items;
 }

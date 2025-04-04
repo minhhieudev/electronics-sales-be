@@ -6,6 +6,8 @@ import com.tip.b18.electronicsales.enums.PaymentMethod;
 import com.tip.b18.electronicsales.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -47,6 +49,7 @@ public class Order extends BaseIdEntity {
     @Column(name = "delivery", nullable = false)
     private Delivery delivery;
 
-    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 }
