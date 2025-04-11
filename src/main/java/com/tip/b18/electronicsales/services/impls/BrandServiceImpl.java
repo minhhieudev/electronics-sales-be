@@ -43,12 +43,14 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public CustomPage<BrandsDTO> viewBrands(String search, int page, int limit) {
-        CustomPage<BrandsDTO> brandsDTO = new CustomPage<>();;
-        Pageable pageable;
+        CustomPage<BrandsDTO> brandsDTO = new CustomPage<>();
+        Pageable pageable = Pageable.unpaged();;
         Page<Brand> brands;
 
         if(SecurityUtil.isAdminRole()){
-            pageable = PageRequest.of(page, limit);
+            if(limit > 0){
+                pageable = PageRequest.of(page, limit);
+            }
             brands = brandRepository.findByBrandName(search, pageable);
 
             PageInfoDTO pageInfoDTO = new PageInfoDTO();
@@ -57,7 +59,6 @@ public class BrandServiceImpl implements BrandService {
 
             brandsDTO.setPageInfo(pageInfoDTO);
         }else{
-            pageable = Pageable.unpaged();
             brands = brandRepository.findAll(pageable);
 
             brands.forEach(brand -> {brand.setDescription(null);});

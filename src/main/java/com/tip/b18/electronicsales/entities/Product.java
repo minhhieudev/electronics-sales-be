@@ -31,13 +31,13 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @Column(name = "price", precision = 10, scale = 2, nullable = false)
+    @Column(name = "price", precision = 15, scale = 2, nullable = false)
     private BigDecimal price;
 
     @Column(name = "discount", precision = 10, scale = 2, nullable = false)
     private BigDecimal discount;
 
-    @Column(name = "discount_price", precision = 10, scale = 2, nullable = false)
+    @Column(name = "discount_price", precision = 15, scale = 2, nullable = false)
     private BigDecimal discountPrice;
 
     private int warranty;

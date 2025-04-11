@@ -1,5 +1,7 @@
 package com.tip.b18.electronicsales.repositories;
 
+import com.tip.b18.electronicsales.entities.Color;
+import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.entities.ProductColor;
 import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +22,6 @@ public interface ProductColorRepository extends JpaRepository<ProductColor, UUID
             "FROM ProductColor pc " +
             "WHERE pc.product.id IN :productIdList")
     List<Tuple> findAllByProductIds(@Param("productIdList") List<UUID> productIdList);
+    List<ProductColor> findAllByProductIdIn(List<UUID> productIdList);
+    ProductColor findByProductIdAndColorId(UUID productId, UUID colorId);
 }

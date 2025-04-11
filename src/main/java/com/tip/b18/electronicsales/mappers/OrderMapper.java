@@ -51,10 +51,11 @@ public interface OrderMapper {
                 }).collect(Collectors.toList());
     }
 
-    default OrderDTO createOrderResponse(Order order, List<OrderDetailDTO> detailDTOList){
+    default OrderDTO createOrderResponse(Order order, List<OrderDetailDTO> detailDTOList, int totalQuantity){
         return OrderDTO
                 .builder()
                 .id(order.getId())
+                .totalQuantity(totalQuantity)
                 .orderCode(order.getOrderCode())
                 .totalPrice(order.getTotalPrice())
                 .items(detailDTOList)

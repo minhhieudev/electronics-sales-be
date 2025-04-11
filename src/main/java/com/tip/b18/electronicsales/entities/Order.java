@@ -22,7 +22,7 @@ public class Order extends BaseIdEntity {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @Column(name = "total_price", precision = 10, scale = 2, nullable = false)
+    @Column(name = "total_price", precision = 15, scale = 2, nullable = false)
     private BigDecimal totalPrice;
 
     @Column(name = "fee_delivery", precision = 10, scale = 2, nullable = false)

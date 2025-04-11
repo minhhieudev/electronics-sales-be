@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,4 +33,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             Pageable pageable);
 
     Optional<Order> findByIdAndAccountId(UUID id, UUID accountId);
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt > :startDay AND o.createdAt < :endDay AND o.status <> :status")
+    int countQuantityNewOrders(LocalDateTime startDay, LocalDateTime endDay, Status status);
 }

@@ -1,6 +1,8 @@
 package com.tip.b18.electronicsales.services.impls;
 
+import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.entities.Color;
+import com.tip.b18.electronicsales.exceptions.NotFoundException;
 import com.tip.b18.electronicsales.repositories.ColorRepository;
 import com.tip.b18.electronicsales.services.ColorService;
 import jakarta.transaction.Transactional;
@@ -36,5 +38,14 @@ public class ColorServiceImpl implements ColorService {
     @Override
     public void deleteColors(List<Color> colors) {
         colorRepository.deleteAll(colors);
+    }
+
+    @Override
+    public Color findByColorName(String colorName) {
+        Color color = colorRepository.existsByColor(colorName);
+        if(color == null){
+            throw new NotFoundException(String.format(MessageConstant.ERROR_NOT_FOUND_COLOR, colorName));
+        }
+        return color;
     }
 }

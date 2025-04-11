@@ -1,24 +1,25 @@
 package com.tip.b18.electronicsales.services.impls;
 
+import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.entities.Color;
 import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.entities.ProductColor;
+import com.tip.b18.electronicsales.exceptions.NotFoundException;
+import com.tip.b18.electronicsales.mappers.ProductColorMapper;
 import com.tip.b18.electronicsales.repositories.ProductColorRepository;
 import com.tip.b18.electronicsales.services.ColorService;
 import com.tip.b18.electronicsales.services.ProductColorService;
 import jakarta.persistence.Tuple;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductColorServiceImpl implements ProductColorService {
     private final ProductColorRepository productColorRepository;
     private final ColorService colorService;
+    private final ProductColorMapper productColorMapper;
 
     @Override
     public void addProductColors(List<Color> colorList, Product product) {
@@ -100,6 +101,19 @@ public class ProductColorServiceImpl implements ProductColorService {
         }
         if(!colorListToDelete.isEmpty()){
             colorService.deleteColors(colorListToDelete);
+        }
+    }
+
+    @Override
+    public Map<UUID, List<String>> getColorsByProductIds(List<UUID> productIdList) {
+        return productColorMapper.toMap(productColorRepository.findAllByProductIdIn(productIdList));
+    }
+
+    @Override
+    public void findByProductIdAndColorId(Product product, Color color, String colorName) {
+        ProductColor productColor = productColorRepository.findByProductIdAndColorId(product.getId(), color.getId());
+        if(productColor == null){
+            throw new NotFoundException(String.format(MessageConstant.ERROR_NOT_FOUND_PRODUCT_AND_COLOR, product.getName(), colorName));
         }
     }
 }

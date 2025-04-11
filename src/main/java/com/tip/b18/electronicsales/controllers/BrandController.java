@@ -35,7 +35,7 @@ public class BrandController {
     @GetMapping
     public ResponseDTO<CustomPage<BrandsDTO>> viewBrands(@RequestParam(name = "search", defaultValue = "") String search,
                                                              @RequestParam(name = "page", defaultValue = "0") int page,
-                                                             @RequestParam(name = "limit", defaultValue = "6") int limit){
+                                                             @RequestParam(name = "limit", defaultValue = "-1") int limit){
         ResponseDTO<CustomPage<BrandsDTO>> responseDTO = new ResponseDTO<>();
 
         responseDTO.setStatus("success");

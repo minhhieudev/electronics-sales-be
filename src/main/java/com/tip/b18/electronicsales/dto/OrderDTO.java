@@ -24,5 +24,6 @@ public class OrderDTO {
     private Delivery delivery;
     private BigDecimal feeDelivery;
     private BigDecimal totalPrice;
+    private Integer totalQuantity;
     private List<OrderDetailDTO> items;
 }

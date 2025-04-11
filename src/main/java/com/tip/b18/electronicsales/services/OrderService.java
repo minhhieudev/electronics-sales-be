@@ -6,6 +6,7 @@ import com.tip.b18.electronicsales.enums.Delivery;
 import com.tip.b18.electronicsales.enums.PaymentMethod;
 import com.tip.b18.electronicsales.enums.Status;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface OrderService {
@@ -13,4 +14,5 @@ public interface OrderService {
     OrderDTO viewOrderDetails(UUID id);
     OrderDTO createOrder(OrderDTO orderDTO);
     void updateOrder(OrderDTO orderDTO);
+    int getQuantityNewOrders(LocalDateTime startDay, LocalDateTime endDay);
 }

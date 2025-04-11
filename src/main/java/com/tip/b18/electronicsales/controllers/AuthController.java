@@ -9,6 +9,7 @@ import com.tip.b18.electronicsales.services.AccountService;
 import com.tip.b18.electronicsales.services.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AccountService accountService;
+    private final @Lazy AccountService accountService;
     private final JwtService jwtService;
 
     @PostMapping("/login")

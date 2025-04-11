@@ -14,19 +14,19 @@ import com.tip.b18.electronicsales.exceptions.NotFoundException;
 import com.tip.b18.electronicsales.exceptions.IllegalStateException;
 import com.tip.b18.electronicsales.mappers.OrderMapper;
 import com.tip.b18.electronicsales.repositories.OrderRepository;
-import com.tip.b18.electronicsales.services.AccountService;
-import com.tip.b18.electronicsales.services.OrderDetailService;
-import com.tip.b18.electronicsales.services.OrderService;
-import com.tip.b18.electronicsales.services.ProductService;
+import com.tip.b18.electronicsales.services.*;
 import com.tip.b18.electronicsales.utils.CompareUtil;
 import com.tip.b18.electronicsales.utils.OrderUtil;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,8 +37,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final OrderDetailService orderDetailService;
-    private final AccountService accountService;
+    private final @Lazy AccountService accountService;
     private final ProductService productService;
+    private final CartService cartService;
 
     @Override
     public CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery) {
@@ -78,9 +79,12 @@ public class OrderServiceImpl implements OrderService {
         Account account = accountService.findById(SecurityUtil.getAuthenticatedUserId());
         productService.updateStockProducts(orderDTO.getItems());
         Order order = orderRepository.save(orderMapper.toOrder(orderDTO, OrderUtil.generateOrderCode(), account));
-        List<OrderDetailDTO> orderDetailDTOList = orderDetailService.createOrderDetails(order, orderDTO.getItems());
 
-        return orderMapper.createOrderResponse(order, orderDetailDTOList);
+        cartService.deleteItemsInCartAfterCreateOrder(orderDTO.getItems());
+        int totalQuantity = cartService.getTotalQuantityItemInCartByAccountId();
+
+        List<OrderDetailDTO> orderDetailDTOList = orderDetailService.createOrderDetails(order, orderDTO.getItems());
+        return orderMapper.createOrderResponse(order, orderDetailDTOList, totalQuantity);
     }
 
     @Override
@@ -123,5 +127,10 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         orderRepository.save(order);
+    }
+
+    @Override
+    public int getQuantityNewOrders(LocalDateTime startDay, LocalDateTime endDay) {
+        return orderRepository.countQuantityNewOrders(startDay, endDay, Status.CANCELED);
     }
 }

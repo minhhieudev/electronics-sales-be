@@ -27,4 +27,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     boolean existsBySkuAndIsDeleted(String sku, boolean isDeleted);
     List<Product> findByIsDeletedTrueAndDeletedAtBefore(LocalDateTime time);
     List<Product> findAllByIdInAndIsDeleted(List<UUID> uuidList, boolean isDeleted);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.createdAt > :startDay AND p.createdAt < :endDay AND p.isDeleted = false")
+    int countQuantityNewProducts(LocalDateTime startDay, LocalDateTime endDay);
 }

@@ -3,6 +3,7 @@ package com.tip.b18.electronicsales.services;
 import com.tip.b18.electronicsales.dto.*;
 import com.tip.b18.electronicsales.entities.Account;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface AccountService {
@@ -14,4 +15,5 @@ public interface AccountService {
     void deleteAccount(UUID id);
     void changePassword(UpdatePasswordDTO updatePasswordDTO);
     Account findById(UUID id);
+    int getQuantityNewCustomers(LocalDateTime startDay, LocalDateTime endDay);
 }

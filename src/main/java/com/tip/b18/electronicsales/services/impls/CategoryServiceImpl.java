@@ -30,11 +30,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CustomPage<CategoriesDTO> viewCategories(String search, int page, int limit) {
         CustomPage<CategoriesDTO> categoriesDTO = new CustomPage<>();;
-        Pageable pageable;
+        Pageable pageable = Pageable.unpaged();
         Page<Category> categories;
 
         if(SecurityUtil.isAdminRole()){
-            pageable = PageRequest.of(page, limit);
+            if(limit > 0){
+                pageable = PageRequest.of(page, limit);
+            }
             categories = categoryRepository.findByCategoryName(search, pageable);
 
             PageInfoDTO pageInfoDTO = new PageInfoDTO();
@@ -43,7 +45,6 @@ public class CategoryServiceImpl implements CategoryService {
 
             categoriesDTO.setPageInfo(pageInfoDTO);
         }else{
-            pageable = Pageable.unpaged();
             categories = categoryRepository.findAll(pageable);
 
             categories.forEach(category -> {category.setDescription(null);});

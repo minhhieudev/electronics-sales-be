@@ -5,6 +5,7 @@ import com.tip.b18.electronicsales.dto.OrderDetailDTO;
 import com.tip.b18.electronicsales.dto.ProductDTO;
 import com.tip.b18.electronicsales.entities.Product;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,4 +18,6 @@ public interface ProductService {
     void scheduledProductCleanup();
     void updateStockProducts(List<OrderDetailDTO> detailDTOList);
     List<Product> findProductsById(List<OrderDetailDTO> orderDetailDTOList);
+    Product findProductById(UUID uuid);
+    int getQuantityNewProducts(LocalDateTime startDay, LocalDateTime endDay);
 }

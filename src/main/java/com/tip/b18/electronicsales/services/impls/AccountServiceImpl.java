@@ -7,14 +7,17 @@ import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.mappers.AccountMapper;
 import com.tip.b18.electronicsales.repositories.AccountRepository;
 import com.tip.b18.electronicsales.services.AccountService;
+import com.tip.b18.electronicsales.services.CartService;
 import com.tip.b18.electronicsales.services.PasswordService;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +28,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final PasswordService passwordService;
     private final AccountMapper accountMapper;
+    private final @Lazy CartService cartService;
 
     @Override
     public AccountDTO loginAccount(AccountLoginDTO accountLoginDTO) {
@@ -35,8 +39,12 @@ public class AccountServiceImpl implements AccountService {
         if (!checkPassword) {
             throw new CredentialsException(MessageConstant.ERROR_INVALID_CREDENTIALS);
         }
+        AccountDTO accountDTO =accountMapper.toDTO(account);
+        if(!account.isRole()){
+            accountDTO.setTotalQuantity(cartService.getTotalQuantityItemInCartByAccountId(account.getId()));
+        }
 
-        return accountMapper.toDTO(account);
+        return accountDTO;
     }
 
     @Override
@@ -184,5 +192,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account findById(UUID id) {
         return accountRepository.findById(id).orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT));
+    }
+
+    @Override
+    public int getQuantityNewCustomers(LocalDateTime startDay, LocalDateTime endDay) {
+        return accountRepository.countQuantityNewCustomers(startDay, endDay);
     }
 }

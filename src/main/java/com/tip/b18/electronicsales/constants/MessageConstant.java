@@ -22,7 +22,11 @@ public class MessageConstant {
     public static final String ERROR_NOT_FOUND_CATEGORY = "Không tìm thấy thể loại";
     public static final String ERROR_NOT_FOUND_BRAND = "Không tìm thấy thương hiệu";
     public static final String ERROR_NOT_FOUND_PRODUCT = "Không tìm thấy sản phẩm";
+    public static final String ERROR_NOT_FOUND_PRODUCT_AND_COLOR = "Sản phẩm %s không có màu %s";
     public static final String ERROR_NOT_FOUND_ORDER = "Không tìm thấy hóa đơn";
+    public static final String ERROR_NOT_FOUND_CART = "Không tìm thấy giỏ hàng";
+    public static final String ERROR_NOT_FOUND_PRODUCT_IN_CART = "Không tìm thấy sản phẩm trong giỏ hàng";
+    public static final String ERROR_NOT_FOUND_COLOR = "Không tìm thấy màu %s";
     public static final String ERROR_ACCOUNT_HAS_ORDERS = "Xóa các đơn hàng liên quan trước khi xóa tài khoản";
     public static final String ERROR_CATEGORY_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thể loại";
     public static final String ERROR_BRAND_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thương hiệu";

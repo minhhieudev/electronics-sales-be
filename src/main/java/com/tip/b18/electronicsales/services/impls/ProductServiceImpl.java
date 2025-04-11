@@ -14,6 +14,7 @@ import com.tip.b18.electronicsales.mappers.TupleMapper;
 import com.tip.b18.electronicsales.repositories.*;
 import com.tip.b18.electronicsales.services.*;
 import com.tip.b18.electronicsales.utils.BigDecimalUtil;
+import com.tip.b18.electronicsales.utils.CompareUtil;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
@@ -86,8 +87,8 @@ public class ProductServiceImpl implements ProductService {
                 .colors(colors)
                 .images(images);
         if(!SecurityUtil.isAdminRole()){
-            Integer quantitySold = tuple.get("quantitySold", Integer.class);
-            builder.quantitySold(quantitySold != null ? quantitySold : 0);
+            Long quantitySold = tuple.get("quantitySold", Long.class);
+            builder.quantitySold(quantitySold != null ? quantitySold.intValue() : 0);
         }
         return builder.build();
     }
@@ -138,7 +139,7 @@ public class ProductServiceImpl implements ProductService {
 
         boolean isChange = false;
 
-        if(productDTO.getSku() != null && !productDTO.getSku().equals(product.getSku())){
+        if(!CompareUtil.compare(productDTO.getSku(), product.getSku())){
             if(productRepository.existsBySkuAndIsDeleted(productDTO.getSku(), false)){
                 throw new AlreadyExistsException(MessageConstant.ERROR_PRODUCT_EXISTS);
             }
@@ -147,48 +148,48 @@ public class ProductServiceImpl implements ProductService {
             isChange = true;
         }
 
-        if(productDTO.getName() != null && !productDTO.getName().equals(product.getName())){
+        if(!CompareUtil.compare(productDTO.getName(), product.getName())){
             product.setName(productDTO.getName());
             isChange = true;
         }
 
-        if(productDTO.getStock() != null && !productDTO.getStock().equals(product.getStock())){
+        if(!CompareUtil.compare(productDTO.getStock(), product.getStock())){
             product.setStock(productDTO.getStock());
             isChange = true;
         }
 
-        if(productDTO.getPrice() != null && !productDTO.getPrice().equals(product.getPrice())){
+        if(!CompareUtil.compare(productDTO.getPrice(), product.getPrice())){
             product.setPrice(productDTO.getPrice());
             isChange = true;
         }
 
-        if(productDTO.getDiscount() != null && !productDTO.getDiscount().equals(product.getDiscount())){
+        if(!CompareUtil.compare(productDTO.getDiscount(), product.getDiscount())){
             BigDecimal discountPrice = BigDecimalUtil.calculateDiscountPrice(product.getPrice(), productDTO.getDiscount());
-            if(discountPrice != null && !discountPrice.equals(product.getDiscountPrice())){
+            if(!CompareUtil.compare(discountPrice, product.getDiscountPrice())){
                 product.setDiscountPrice(discountPrice);
             }
             product.setDiscount(productDTO.getDiscount());
             isChange = true;
         }
 
-        if(productDTO.getDescription() != null && !productDTO.getDescription().equals(product.getDescription())){
+        if(!CompareUtil.compare(productDTO.getDescription(), product.getDescription())){
             product.setDescription(productDTO.getDescription());
             isChange = true;
         }
 
-        if(productDTO.getWarranty() != null && !productDTO.getWarranty().equals(product.getWarranty())){
+        if(!CompareUtil.compare(productDTO.getWarranty(), product.getWarranty())){
             product.setWarranty(productDTO.getWarranty());
             isChange = true;
         }
 
-        if(productDTO.getMainImageUrl() != null && !productDTO.getMainImageUrl().equals(product.getMainImageUrl())){
+        if(!CompareUtil.compare(productDTO.getMainImageUrl(), product.getMainImageUrl())){
             product.setMainImageUrl(productDTO.getMainImageUrl());
             isChange = true;
         }
 
         if(productDTO.getCategory() != null){
             Category category = categoryService.getCategoryById(UUID.fromString(productDTO.getCategory()));
-            if(productDTO.getCategory() != null && !category.equals(product.getCategory())){
+            if(!CompareUtil.compare(category, productDTO.getCategory())){
                 product.setCategory(category);
                 isChange = true;
             }
@@ -196,7 +197,7 @@ public class ProductServiceImpl implements ProductService {
 
         if(productDTO.getBrand() != null){
             Brand brand = brandService.getBrandById(UUID.fromString(productDTO.getBrand()));
-            if(brand != null && !brand.equals(product.getBrand())){
+            if(!CompareUtil.compare(brand, productDTO.getBrand())){
                 product.setBrand(brand);
                 isChange = true;
             }
@@ -268,5 +269,19 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
 
         return productRepository.findAllByIdInAndIsDeleted(uuidList, false);
+    }
+
+    @Override
+    public Product findProductById(UUID uuid) {
+        Product product = productRepository.findByIdAndIsDeleted(uuid, false);
+        if(product == null){
+            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT);
+        }
+        return product;
+    }
+
+    @Override
+    public int getQuantityNewProducts(LocalDateTime startDay, LocalDateTime endDay) {
+        return productRepository.countQuantityNewProducts(startDay, endDay);
     }
 }

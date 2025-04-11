@@ -24,9 +24,9 @@ public class OrderDetail extends BaseIdEntity {
 
     private int quantity;
 
-    @Column(name = "price_at_time", length = 10, scale = 2, nullable = false)
+    @Column(name = "price_at_time", length = 15, scale = 2, nullable = false)
     private BigDecimal priceAtTime;
 
-    @Column(name = "total_price", length = 10, scale = 2, nullable = false)
+    @Column(name = "total_price", length = 15, scale = 2, nullable = false)
     private BigDecimal totalPrice;
 }

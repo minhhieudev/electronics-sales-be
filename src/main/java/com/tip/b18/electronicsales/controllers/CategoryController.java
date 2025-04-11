@@ -26,7 +26,7 @@ public class CategoryController {
     @GetMapping
     public ResponseDTO<CustomPage<CategoriesDTO>> viewCategories(@RequestParam(name = "search", defaultValue = "") String search,
                                                                  @RequestParam(name = "page", defaultValue = "0") int page,
-                                                                 @RequestParam(name = "limit", defaultValue = "6") int limit){
+                                                                 @RequestParam(name = "limit", defaultValue = "-1") int limit){
         ResponseDTO<CustomPage<CategoriesDTO>> responseDTO = new ResponseDTO<>();
 
         responseDTO.setStatus("success");
