@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDTO);
     }
 
-    @ExceptionHandler({IllegalStateException.class, InsufficientStockException.class, HttpMessageNotReadableException.class ,IllegalArgumentException.class, InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({DateTimeParseException.class ,IllegalStateException.class, InsufficientStockException.class, HttpMessageNotReadableException.class ,IllegalArgumentException.class, InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ResponseDTO<?>> handleBadRequest(Exception e) {
         String message = null;
         if (e instanceof MethodArgumentNotValidException) {
@@ -65,7 +66,9 @@ public class GlobalExceptionHandler {
             }else{
                 message = MessageConstant.INVALID_JSON_FORMAT;
             }
-        } else {
+        } else if(e instanceof DateTimeParseException){
+            message = MessageConstant.INVALID_DATE_FORMAT_MESSAGE;
+        }else {
             message = e.getMessage();
         }
         ResponseDTO<?> responseDTO = errorResponse(message);

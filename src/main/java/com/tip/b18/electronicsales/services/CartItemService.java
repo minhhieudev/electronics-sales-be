@@ -17,5 +17,4 @@ public interface CartItemService {
     List<CartItem> deleteItemsInCart(CustomList<UUID> uuidList);
     void updateQuantityOrColorItemInCart(Cart cart, CartItemDTO cartItemDTO, Product product);
     Tuple calculatorTotalPriceAndTotalQuantityOfCart(UUID cartId);
-    void deleteItemsInCart(Cart cart, List<OrderDetailDTO> detailDTOList);
 }

@@ -1,14 +1,23 @@
 package com.tip.b18.electronicsales.controllers;
 
+import com.tip.b18.electronicsales.dto.CustomList;
 import com.tip.b18.electronicsales.dto.DailySummaryDTO;
+import com.tip.b18.electronicsales.dto.ProductDTO;
 import com.tip.b18.electronicsales.dto.ResponseDTO;
 import com.tip.b18.electronicsales.services.StatisticService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/statistics")
@@ -24,6 +33,18 @@ public class StatisticsController {
 
         responseDTO.setStatus("success");
         responseDTO.setData((statisticService.getDailySummary()));
+
+        return responseDTO;
+    }
+
+    @GetMapping("/top-products")
+    public ResponseDTO<CustomList<ProductDTO>> getTopProducts(@RequestParam(name = "limit", defaultValue = "-1", required = false) int limit,
+                                                              @RequestParam(name = "startDay", required = false) String startDay,
+                                                              @RequestParam(name = "endDay", required = false) String endDay){
+        ResponseDTO<CustomList<ProductDTO>> responseDTO = new ResponseDTO<>();
+
+        responseDTO.setStatus("success");
+        responseDTO.setData(statisticService.getTopProducts(limit, startDay, endDay));
 
         return responseDTO;
     }

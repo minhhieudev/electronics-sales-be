@@ -1,6 +1,8 @@
 package com.tip.b18.electronicsales.services.impls;
 
+import com.tip.b18.electronicsales.dto.CustomList;
 import com.tip.b18.electronicsales.dto.DailySummaryDTO;
+import com.tip.b18.electronicsales.dto.ProductDTO;
 import com.tip.b18.electronicsales.services.AccountService;
 import com.tip.b18.electronicsales.services.OrderService;
 import com.tip.b18.electronicsales.services.ProductService;
@@ -29,5 +31,10 @@ public class StatisticServiceImpl implements StatisticService {
         int totalQuantityNewCustomers = accountService.getQuantityNewCustomers(startDay, endDay);
 
         return new DailySummaryDTO(totalQuantityNewProducts, totalQuantityNewOrders , totalQuantityNewCustomers);
+    }
+
+    @Override
+    public CustomList<ProductDTO> getTopProducts(int limit, String startDay, String endDay) {
+        return orderService.getTopProducts(limit, startDay, endDay);
     }
 }

@@ -71,7 +71,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public int deleteItemsInCart(CustomList<UUID> cartItemIdList) {
+    public void deleteItemsInCart(CustomList<UUID> cartItemIdList) {
         Cart cart = cartRepository.findByAccountId(SecurityUtil.getAuthenticatedUserId());
         if (cart == null){
             throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_CART);
@@ -79,7 +79,7 @@ public class CartServiceImpl implements CartService {
 
         List<CartItem> cartItems = cartItemService.deleteItemsInCart(cartItemIdList);
         if(cartItems.isEmpty()){
-            return cart.getTotalQuantity();
+            return;
         }
 
         int totalItems = cartItems.size();
@@ -90,7 +90,7 @@ public class CartServiceImpl implements CartService {
         cart.setTotalQuantity(cart.getTotalQuantity() - totalItems);
         cart.setTotalPrice(cart.getTotalPrice().subtract(totalPrice));
 
-        return cartRepository.save(cart).getTotalQuantity();
+        cartRepository.save(cart);
     }
 
     @Override
@@ -125,14 +125,6 @@ public class CartServiceImpl implements CartService {
     public int getTotalQuantityItemInCartByAccountId(UUID accountId) {
         Cart cart = cartRepository.findByAccountId(accountId);
         return cart == null ? 0 : cart.getTotalQuantity();
-    }
-
-    @Override
-    public void deleteItemsInCartAfterCreateOrder(List<OrderDetailDTO> detailDTOList) {
-        Cart cart = cartRepository.findByAccountId(SecurityUtil.getAuthenticatedUserId());
-        cartItemService.deleteItemsInCart(cart, detailDTOList);
-
-        updateTotalPriceAndTotalQuantityOfCart(cart);
     }
 
     @Override

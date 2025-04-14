@@ -25,5 +25,4 @@ public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
             "FROM CartItem ci " +
             "WHERE ci.cart.id = :cartId")
     Tuple calculatorTotalPriceAndTotalQuantityOfCart(@Param("cartId") UUID cartId);
-    List<CartItem> findAllByCartIdAndProductIdIn(UUID cartId, Set<UUID> productIds);
 }

@@ -1,10 +1,7 @@
 package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.constants.MessageConstant;
-import com.tip.b18.electronicsales.dto.CustomPage;
-import com.tip.b18.electronicsales.dto.OrderDetailDTO;
-import com.tip.b18.electronicsales.dto.PageInfoDTO;
-import com.tip.b18.electronicsales.dto.ProductDTO;
+import com.tip.b18.electronicsales.dto.*;
 import com.tip.b18.electronicsales.entities.*;
 import com.tip.b18.electronicsales.exceptions.AlreadyExistsException;
 import com.tip.b18.electronicsales.exceptions.InsufficientStockException;

@@ -6,8 +6,6 @@ import com.tip.b18.electronicsales.entities.Category;
 import com.tip.b18.electronicsales.entities.Product;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper(componentModel = "spring")

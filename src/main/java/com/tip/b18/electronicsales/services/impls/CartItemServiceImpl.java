@@ -3,7 +3,6 @@ package com.tip.b18.electronicsales.services.impls;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.CartItemDTO;
 import com.tip.b18.electronicsales.dto.CustomList;
-import com.tip.b18.electronicsales.dto.OrderDetailDTO;
 import com.tip.b18.electronicsales.entities.CartItem;
 import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.entities.Cart;
@@ -113,16 +112,5 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public Tuple calculatorTotalPriceAndTotalQuantityOfCart(UUID cartId) {
         return cartItemRepository.calculatorTotalPriceAndTotalQuantityOfCart(cartId);
-    }
-
-    @Override
-    public void deleteItemsInCart(Cart cart, List<OrderDetailDTO> detailDTOList) {
-        Set<UUID> productIdsSet = detailDTOList
-                .stream()
-                .map(OrderDetailDTO::getId)
-                .collect(Collectors.toSet());
-
-        List<CartItem> cartItems = cartItemRepository.findAllByCartIdAndProductIdIn(cart.getId(), productIdsSet);
-        cartItemRepository.deleteAll(cartItems);
     }
 }

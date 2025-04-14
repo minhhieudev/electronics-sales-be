@@ -35,4 +35,5 @@ public class MessageConstant {
     public static final String INVALID_JSON_FORMAT = "Dữ liệu JSON không hợp lệ";
     public static final String ERROR_INSUFFICIENT_STOCK = "Số lượng hàng tồn kho của sản phẩm %s không đủ";
     public static final String ERROR_UPDATE_ORDER = "Không thể cập nhật đơn hàng! Đơn hàng đã %s";
+    public static final String INVALID_DATE_FORMAT_MESSAGE = "Ngày tháng không hợp lệ. Định dạng hợp lệ: yyyy-M-d hoặc yyyy-MM-dd";
 }

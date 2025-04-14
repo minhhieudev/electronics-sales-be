@@ -47,6 +47,8 @@ public class CartController {
 
     @DeleteMapping
     public ResponseDTO<CartDTO> deleteItemsInCart(@RequestBody @Valid CustomList<UUID> cartItemIdList){
+        cartService.deleteItemsInCart(cartItemIdList);
+
         ResponseDTO<CartDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_DELETE);

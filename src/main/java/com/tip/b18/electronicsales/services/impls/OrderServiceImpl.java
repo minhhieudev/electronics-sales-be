@@ -1,10 +1,7 @@
 package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.constants.MessageConstant;
-import com.tip.b18.electronicsales.dto.CustomPage;
-import com.tip.b18.electronicsales.dto.OrderDTO;
-import com.tip.b18.electronicsales.dto.OrderDetailDTO;
-import com.tip.b18.electronicsales.dto.PageInfoDTO;
+import com.tip.b18.electronicsales.dto.*;
 import com.tip.b18.electronicsales.entities.Account;
 import com.tip.b18.electronicsales.entities.Order;
 import com.tip.b18.electronicsales.enums.Delivery;
@@ -13,11 +10,14 @@ import com.tip.b18.electronicsales.enums.Status;
 import com.tip.b18.electronicsales.exceptions.NotFoundException;
 import com.tip.b18.electronicsales.exceptions.IllegalStateException;
 import com.tip.b18.electronicsales.mappers.OrderMapper;
+import com.tip.b18.electronicsales.mappers.ProductMapper;
+import com.tip.b18.electronicsales.mappers.TupleMapper;
 import com.tip.b18.electronicsales.repositories.OrderRepository;
 import com.tip.b18.electronicsales.services.*;
 import com.tip.b18.electronicsales.utils.CompareUtil;
 import com.tip.b18.electronicsales.utils.OrderUtil;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
+import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
@@ -26,7 +26,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,6 +39,8 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final ProductMapper productMapper;
+    private final TupleMapper tupleMapper;
     private final OrderDetailService orderDetailService;
     private final @Lazy AccountService accountService;
     private final ProductService productService;
@@ -79,10 +84,7 @@ public class OrderServiceImpl implements OrderService {
         Account account = accountService.findById(SecurityUtil.getAuthenticatedUserId());
         productService.updateStockProducts(orderDTO.getItems());
         Order order = orderRepository.save(orderMapper.toOrder(orderDTO, OrderUtil.generateOrderCode(), account));
-
-        cartService.deleteItemsInCartAfterCreateOrder(orderDTO.getItems());
         int totalQuantity = cartService.getTotalQuantityItemInCartByAccountId();
-
         List<OrderDetailDTO> orderDetailDTOList = orderDetailService.createOrderDetails(order, orderDTO.getItems());
         return orderMapper.createOrderResponse(order, orderDetailDTOList, totalQuantity);
     }
@@ -132,5 +134,28 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public int getQuantityNewOrders(LocalDateTime startDay, LocalDateTime endDay) {
         return orderRepository.countQuantityNewOrders(startDay, endDay, Status.CANCELED);
+    }
+
+    @Override
+    public CustomList<ProductDTO> getTopProducts(int limit, String startDayReq, String endDayReq) {
+        Pageable pageable = Pageable.unpaged();
+        if(limit > 0){
+            pageable = PageRequest.of(0, limit);
+        }
+
+        LocalDateTime startDay = null;
+        LocalDateTime endDay = LocalDate.now().atTime(LocalTime.MAX);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d");
+        if(startDayReq != null){
+            startDay = LocalDate.parse(startDayReq, formatter).atStartOfDay();
+        }
+
+        if(endDayReq != null){
+            endDay = LocalDate.parse(endDayReq, formatter).atTime(LocalTime.MAX);
+        }
+
+        List<Tuple> tuples = orderRepository.getTopProducts(pageable, startDay, endDay, Status.CANCELED);
+        return new CustomList<>(tupleMapper.toProductDTOList(tuples));
     }
 }

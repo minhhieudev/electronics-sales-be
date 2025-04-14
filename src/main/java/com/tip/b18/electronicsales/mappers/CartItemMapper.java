@@ -25,6 +25,7 @@ public interface CartItemMapper {
                         .stock(cartItem.getProduct().getStock())
                         .totalPrice(cartItem.getTotalPrice())
                         .mainImageUrl(cartItem.getProduct().getMainImageUrl())
+                        .isDeleted(cartItem.getProduct().isDeleted())
                         .colors(cartItemColors.get(cartItem.getProduct().getId()))
                         .build()
                 )

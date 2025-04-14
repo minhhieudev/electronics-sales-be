@@ -1,6 +1,7 @@
 package com.tip.b18.electronicsales.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -22,6 +23,8 @@ public class CartItemDTO {
     private BigDecimal totalPrice;
     private int stock;
     private int quantity;
+    @JsonProperty("isDeleted")
+    private boolean isDeleted;
     private String mainImageUrl;
     private List<String> colors;
 }
