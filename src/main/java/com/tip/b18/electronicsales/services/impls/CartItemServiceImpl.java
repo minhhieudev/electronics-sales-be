@@ -82,31 +82,39 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public void updateQuantityOrColorItemInCart(Cart cart, CartItemDTO cartItemDTO, Product product) {
-        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), cartItemDTO.getId());
-        if (cartItem == null){
-            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT_IN_CART);
+    public void updateQuantityOrColorItemsInCart(Cart cart, List<CartItemDTO> cartItemDTOs) {
+        List<UUID> productIds = cartItemDTOs
+                .stream()
+                .map(CartItemDTO::getId)
+                .toList();
+        List<String> colors = cartItemDTOs
+                .stream()
+                .map(CartItemDTO::getColor)
+                .toList();
+        Map<String, Integer> cartItemDTOMap = cartItemDTOs
+                .stream()
+                .collect(Collectors.toMap(dto -> dto.getId() + dto.getColor(), CartItemDTO::getQuantity));
+
+        List<CartItem> cartItems = cartItemRepository.findAllByCartIdAndProductIdInAndColorIn(cart.getId(), productIds, colors);
+        if(cartItems.isEmpty()){
+            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCTS_IN_CART);
         }
 
-        boolean isUpdate = false;
-        if(cartItemDTO.getQuantity() > 0){
-            if(CompareUtil.isFirstNumberSmaller(product.getStock(), cartItemDTO.getQuantity())){
-                throw new InsufficientStockException(String.format(MessageConstant.ERROR_INSUFFICIENT_STOCK, product.getName()));
-            }
-
-            cartItem.setQuantity(cartItemDTO.getQuantity());
-            cartItem.setTotalPrice(product.getDiscountPrice().multiply(new BigDecimal(cartItemDTO.getQuantity())));
-            isUpdate = true;
-        }
-
-        if(!CompareUtil.compare(cartItemDTO.getColor(), cartItem.getColor())){
-            cartItem.setColor(cartItemDTO.getColor());
-            isUpdate = true;
-        }
-
-        if(isUpdate){
-            cartItemRepository.save(cartItem);
-        }
+        List<CartItem> cartItemListToUpdate = cartItems
+                .stream()
+                .filter(cartItem -> cartItemDTOMap.containsKey(cartItem.getProduct().getId() + cartItem.getColor()))
+                .peek(cartItem -> {
+                    int quantity = cartItemDTOMap.get(cartItem.getProduct().getId() + cartItem.getColor());
+                    if(quantity > 0){
+                        if(CompareUtil.isFirstNumberSmaller(cartItem.getProduct().getStock(),quantity)){
+                            throw new InsufficientStockException(String.format(MessageConstant.ERROR_INSUFFICIENT_STOCK, cartItem.getProduct().getName()));
+                        }
+                    }
+                    cartItem.setQuantity(quantity);
+                    cartItem.setTotalPrice(cartItem.getProduct().getDiscountPrice().multiply(BigDecimal.valueOf(quantity)));
+                })
+                .toList();
+        cartItemRepository.saveAll(cartItemListToUpdate);
     }
 
     @Override

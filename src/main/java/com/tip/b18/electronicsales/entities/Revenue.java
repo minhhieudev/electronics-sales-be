@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Entity
 @Data
 public class Revenue extends BaseIdEntity {
-    @Column(name = "total_price", precision = 10, scale = 2, nullable = false)
+    @Column(name = "total_price", precision = 15, scale = 2, nullable = false)
     private BigDecimal totalPrice;
 
     @Column(name = "total_order", nullable = false)

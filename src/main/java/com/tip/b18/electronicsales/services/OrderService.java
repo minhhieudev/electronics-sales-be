@@ -2,6 +2,7 @@ package com.tip.b18.electronicsales.services;
 
 import com.tip.b18.electronicsales.dto.CustomList;
 import com.tip.b18.electronicsales.dto.CustomPage;
+import com.tip.b18.electronicsales.dto.DailyRevenueDTO;
 import com.tip.b18.electronicsales.dto.OrderDTO;
 import com.tip.b18.electronicsales.dto.ProductDTO;
 import com.tip.b18.electronicsales.enums.Delivery;
@@ -18,5 +19,6 @@ public interface OrderService {
     OrderDTO createOrder(OrderDTO orderDTO);
     void updateOrder(OrderDTO orderDTO);
     int getQuantityNewOrders(LocalDateTime startDay, LocalDateTime endDay);
+    CustomList<DailyRevenueDTO> getDailyRevenue(int limit, String startDayReq, String endDayReq);
     CustomList<ProductDTO> getTopProducts(int limit, String startDay, String endDay);
 }

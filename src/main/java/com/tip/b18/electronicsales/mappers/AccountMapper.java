@@ -16,5 +16,16 @@ public interface AccountMapper {
     AccountDTO toDTO(Account account);
     List<AccountsDTO> toDTOList(Page<Account> accounts);
     AccountPersonalDTO toAccountPersonalDto(Account account);
-    AccountUpdateDTO toAccountUpdateDto(Account account);
+    default AccountUpdateDTO toAccountUpdateDto(Account account, int totalQuantity){
+        return AccountUpdateDTO
+                .builder()
+                .fullName(account.getFullName())
+                .email(account.getEmail())
+                .phoneNumber(account.getPhoneNumber())
+                .dateOfBirth(account.getDateOfBirth())
+                .address(account.getAddress())
+                .gender(account.getGender())
+                .totalQuantity(totalQuantity)
+                .build();
+    }
 }

@@ -12,7 +12,7 @@ public interface CartService {
     List<CartItemDTO> viewItemsInCart();
     void addItemToCart(CartItemDTO cartItemDTO);
     void deleteItemsInCart(CustomList<UUID> cartItemIdList);
-    void updateItemInCart(CartItemDTO cartItemDTO);
+    void updateItemsInCart(List<CartItemDTO> cartItemDTO);
     Product checkExitsColorAndProductAndProductColor(CartItemDTO cartItemDTO);
     int getTotalQuantityItemInCartByAccountId();
     int getTotalQuantityItemInCartByAccountId(UUID accountId);

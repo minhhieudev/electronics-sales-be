@@ -37,15 +37,23 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     Optional<Order> findByIdAndAccountId(UUID id, UUID accountId);
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt > :startDay AND o.createdAt < :endDay AND o.status <> :status")
     int countQuantityNewOrders(LocalDateTime startDay, LocalDateTime endDay, Status status);
-    @Query("SELECT p.name AS productName, SUM(od.quantity) AS quantitySold " +
+    @Query("SELECT p.sku as productSku, p.name AS productName, SUM(od.quantity) AS quantitySold " +
             "FROM Order o " +
             "JOIN OrderDetail od ON od.order.id = o.id " +
             "JOIN Product p ON p.id = od.product.id " +
             "WHERE (:startDay IS NULL OR o.createdAt >= :startDay) AND o.createdAt <= :endDay AND o.status <> :status " +
-            "GROUP BY p.name " +
+            "GROUP BY p.sku, p.name " +
             "ORDER BY quantitySold DESC")
     List<Tuple> getTopProducts(Pageable pageable,
                                @Param("startDay") LocalDateTime startDay,
                                @Param("endDay") LocalDateTime endDay,
                                @Param("status") Status status);
+    @Query("SELECT SUM(o.totalPrice) AS totalPrice, " +
+            "COUNT(o) AS totalOrder, " +
+            "FUNCTION('DATE', o.createdAt) AS date " +
+            "FROM Order o " +
+            "WHERE (:startDay IS NULL OR o.createdAt >= :startDay) AND o.createdAt <= :endDay " +
+            "GROUP BY FUNCTION('DATE', o.createdAt) " +
+            "ORDER BY FUNCTION('DATE', o.createdAt) DESC")
+    List<Tuple> getDailyRevenue(Pageable pageable, LocalDateTime startDay, LocalDateTime endDay);
 }

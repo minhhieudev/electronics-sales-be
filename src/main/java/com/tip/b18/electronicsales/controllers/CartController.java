@@ -58,8 +58,8 @@ public class CartController {
     }
 
     @PatchMapping
-    public ResponseDTO<?> updateItemInCart(@RequestBody @Valid CartItemDTO cartItemDTO){
-        cartService.updateItemInCart(cartItemDTO);
+    public ResponseDTO<?> updateItemsInCart(@RequestBody @Valid List<CartItemDTO> cartItemDTO){
+        cartService.updateItemsInCart(cartItemDTO);
 
         ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");

@@ -25,7 +25,7 @@ public class Order extends BaseIdEntity {
     @Column(name = "total_price", precision = 15, scale = 2, nullable = false)
     private BigDecimal totalPrice;
 
-    @Column(name = "fee_delivery", precision = 10, scale = 2, nullable = false)
+    @Column(name = "fee_delivery", precision = 15, scale = 2, nullable = false)
     private BigDecimal feeDelivery;
 
     @Column(name = "phone_number", columnDefinition = "CHAR(10)")

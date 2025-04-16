@@ -10,13 +10,10 @@ import com.tip.b18.electronicsales.enums.Status;
 import com.tip.b18.electronicsales.exceptions.NotFoundException;
 import com.tip.b18.electronicsales.exceptions.IllegalStateException;
 import com.tip.b18.electronicsales.mappers.OrderMapper;
-import com.tip.b18.electronicsales.mappers.ProductMapper;
 import com.tip.b18.electronicsales.mappers.TupleMapper;
 import com.tip.b18.electronicsales.repositories.OrderRepository;
 import com.tip.b18.electronicsales.services.*;
-import com.tip.b18.electronicsales.utils.CompareUtil;
-import com.tip.b18.electronicsales.utils.OrderUtil;
-import com.tip.b18.electronicsales.utils.SecurityUtil;
+import com.tip.b18.electronicsales.utils.*;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +36,6 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final ProductMapper productMapper;
     private final TupleMapper tupleMapper;
     private final OrderDetailService orderDetailService;
     private final @Lazy AccountService accountService;
@@ -137,25 +133,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public CustomList<ProductDTO> getTopProducts(int limit, String startDayReq, String endDayReq) {
-        Pageable pageable = Pageable.unpaged();
-        if(limit > 0){
-            pageable = PageRequest.of(0, limit);
-        }
+    public CustomList<ProductDTO> getTopProducts(int limit, String startDay, String endDay) {
+        return new CustomList<>(
+                tupleMapper.toProductDTOList(
+                        orderRepository.getTopProducts(
+                                PageableUtil.toPageable(limit),
+                                LocalDateTimeUtil.parseStartDay(startDay),
+                                LocalDateTimeUtil.parseEndDay(endDay),
+                                Status.CANCELED)
+                )
+        );
+    }
 
-        LocalDateTime startDay = null;
-        LocalDateTime endDay = LocalDate.now().atTime(LocalTime.MAX);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d");
-        if(startDayReq != null){
-            startDay = LocalDate.parse(startDayReq, formatter).atStartOfDay();
-        }
-
-        if(endDayReq != null){
-            endDay = LocalDate.parse(endDayReq, formatter).atTime(LocalTime.MAX);
-        }
-
-        List<Tuple> tuples = orderRepository.getTopProducts(pageable, startDay, endDay, Status.CANCELED);
-        return new CustomList<>(tupleMapper.toProductDTOList(tuples));
+    @Override
+    public CustomList<DailyRevenueDTO> getDailyRevenue(int limit, String startDay, String endDay) {
+        return new CustomList<>(
+                tupleMapper.toDailyRevenueDTO(
+                        orderRepository.getDailyRevenue(
+                                PageableUtil.toPageable(limit),
+                                LocalDateTimeUtil.parseStartDay(startDay),
+                                LocalDateTimeUtil.parseEndDay(endDay))
+                )
+        );
     }
 }

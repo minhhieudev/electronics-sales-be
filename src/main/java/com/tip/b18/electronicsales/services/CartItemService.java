@@ -15,6 +15,6 @@ public interface CartItemService {
     void addNewItemToCart(Cart cart, Product product, CartItemDTO cartItemDTO);
     boolean existCartItem(Cart cart, Product product, String color);
     List<CartItem> deleteItemsInCart(CustomList<UUID> uuidList);
-    void updateQuantityOrColorItemInCart(Cart cart, CartItemDTO cartItemDTO, Product product);
+    void updateQuantityOrColorItemsInCart(Cart cart, List<CartItemDTO> cartItemDTO);
     Tuple calculatorTotalPriceAndTotalQuantityOfCart(UUID cartId);
 }

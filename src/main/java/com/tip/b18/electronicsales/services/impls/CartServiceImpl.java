@@ -4,7 +4,6 @@ import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.CartDTO;
 import com.tip.b18.electronicsales.dto.CartItemDTO;
 import com.tip.b18.electronicsales.dto.CustomList;
-import com.tip.b18.electronicsales.dto.OrderDetailDTO;
 import com.tip.b18.electronicsales.entities.*;
 import com.tip.b18.electronicsales.exceptions.InsufficientStockException;
 import com.tip.b18.electronicsales.exceptions.NotFoundException;
@@ -95,14 +94,13 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void updateItemInCart(CartItemDTO cartItemDTO) {
-        Product product = checkExitsColorAndProductAndProductColor(cartItemDTO);
+    public void updateItemsInCart(List<CartItemDTO> cartItemDTO) {
         Cart cart = cartRepository.findByAccountId(SecurityUtil.getAuthenticatedUserId());
         if(cart == null){
             throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_CART);
         }
 
-        cartItemService.updateQuantityOrColorItemInCart(cart, cartItemDTO, product);
+        cartItemService.updateQuantityOrColorItemsInCart(cart, cartItemDTO);
         updateTotalPriceAndTotalQuantityOfCart(cart);
     }
 

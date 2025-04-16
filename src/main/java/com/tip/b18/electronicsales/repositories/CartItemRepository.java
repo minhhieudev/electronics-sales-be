@@ -20,9 +20,9 @@ public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
                                               @Param("productId") UUID productId,
                                               @Param("color") String color);
     List<CartItem> findAllByIdIn(List<UUID> uuidList);
-    CartItem findByCartIdAndProductId(UUID cartId, UUID productId);
     @Query("SELECT SUM(ci.totalPrice) AS totalPrice, COUNT(ci) AS totalQuantity " +
             "FROM CartItem ci " +
             "WHERE ci.cart.id = :cartId")
     Tuple calculatorTotalPriceAndTotalQuantityOfCart(@Param("cartId") UUID cartId);
+    List<CartItem> findAllByCartIdAndProductIdInAndColorIn(UUID cartId, List<UUID> productIds, List<String> color);
 }

@@ -148,7 +148,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         if(isChange){
-            return accountMapper.toAccountUpdateDto(accountRepository.save(account));
+            return accountMapper.toAccountUpdateDto(accountRepository.save(account), cartService.getTotalQuantityItemInCartByAccountId());
         }
         return accountUpdateDTO;
     }

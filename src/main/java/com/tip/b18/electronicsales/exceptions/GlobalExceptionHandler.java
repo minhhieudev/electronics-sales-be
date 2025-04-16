@@ -55,7 +55,9 @@ public class GlobalExceptionHandler {
             message = Objects.requireNonNull(((MethodArgumentNotValidException) e).getFieldError()).getDefaultMessage();
         } else if(e instanceof MissingServletRequestParameterException){
             message = MessageConstant.ERROR_VALUE_REQUIRED;
-        }  else if(e instanceof HttpMessageNotReadableException){
+        } else if(e instanceof MethodArgumentTypeMismatchException || e instanceof IllegalArgumentException){
+            message = MessageConstant.INVALID_UUID;
+        } else if(e instanceof HttpMessageNotReadableException){
             Throwable cause = e.getCause();
             if(cause instanceof InvalidFormatException invalidFormatException){
                 List<JsonMappingException.Reference> path = invalidFormatException.getPath();
