@@ -8,6 +8,7 @@ import com.tip.b18.electronicsales.entities.CartItem;
 import com.tip.b18.electronicsales.entities.Product;
 import jakarta.persistence.Tuple;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface CartItemService {
@@ -17,4 +18,6 @@ public interface CartItemService {
     List<CartItem> deleteItemsInCart(CustomList<UUID> uuidList);
     void updateQuantityOrColorItemsInCart(Cart cart, List<CartItemDTO> cartItemDTO);
     Tuple calculatorTotalPriceAndTotalQuantityOfCart(UUID cartId);
+    List<UUID> getCartItemsToDelete(Cart cart, List<OrderDetailDTO> orderDetailDTOList);
+    void deleteItemsInCart(List<UUID> uuidList);
 }

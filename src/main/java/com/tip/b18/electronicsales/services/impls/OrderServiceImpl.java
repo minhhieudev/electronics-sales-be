@@ -3,6 +3,8 @@ package com.tip.b18.electronicsales.services.impls;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.*;
 import com.tip.b18.electronicsales.entities.Account;
+import com.tip.b18.electronicsales.entities.Cart;
+import com.tip.b18.electronicsales.entities.CartItem;
 import com.tip.b18.electronicsales.entities.Order;
 import com.tip.b18.electronicsales.enums.Delivery;
 import com.tip.b18.electronicsales.enums.PaymentMethod;
@@ -29,6 +31,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -41,6 +44,7 @@ public class OrderServiceImpl implements OrderService {
     private final @Lazy AccountService accountService;
     private final ProductService productService;
     private final CartService cartService;
+    private final CartItemService cartItemService;
 
     @Override
     public CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery) {
@@ -77,12 +81,29 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO) {
-        Account account = accountService.findById(SecurityUtil.getAuthenticatedUserId());
+        UUID accountId = SecurityUtil.getAuthenticatedUserId();
+
         productService.updateStockProducts(orderDTO.getItems());
-        Order order = orderRepository.save(orderMapper.toOrder(orderDTO, OrderUtil.generateOrderCode(), account));
-        int totalQuantity = cartService.getTotalQuantityItemInCartByAccountId();
+
+        Order order = orderRepository.save(
+                orderMapper.toOrder(
+                        orderDTO,
+                        OrderUtil.generateOrderCode(),
+                        accountService.findById(accountId)));
+
         List<OrderDetailDTO> orderDetailDTOList = orderDetailService.createOrderDetails(order, orderDTO.getItems());
-        return orderMapper.createOrderResponse(order, orderDetailDTOList, totalQuantity);
+
+        if(orderDTO.isFromCart()){
+            Cart cart = cartService.findByAccountId(accountId);
+            if(cart == null){
+                throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_CART);
+            }
+            List<UUID> cartItemIds = cartItemService.getCartItemsToDelete(cart, orderDTO.getItems());
+            cartItemService.deleteItemsInCart(cartItemIds);
+            cartService.updateTotalPriceAndTotalQuantityOfCart(cart);
+        }
+
+        return orderMapper.createOrderResponse(order, orderDetailDTOList, cartService.getTotalQuantityItemInCartByAccountId());
     }
 
     @Override

@@ -18,4 +18,5 @@ public interface CartService {
     int getTotalQuantityItemInCartByAccountId(UUID accountId);
     void updateTotalPriceAndTotalQuantityOfCart(Cart cart);
     CartDTO getTotalQuantityItem();
+    Cart findByAccountId(UUID accountId);
 }

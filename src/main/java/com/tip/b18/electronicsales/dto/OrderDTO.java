@@ -25,5 +25,6 @@ public class OrderDTO {
     private BigDecimal feeDelivery;
     private BigDecimal totalPrice;
     private Integer totalQuantity;
+    private boolean isFromCart;
     private List<OrderDetailDTO> items;
 }

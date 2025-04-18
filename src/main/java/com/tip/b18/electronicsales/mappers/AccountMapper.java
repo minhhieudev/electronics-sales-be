@@ -25,6 +25,7 @@ public interface AccountMapper {
                 .dateOfBirth(account.getDateOfBirth())
                 .address(account.getAddress())
                 .gender(account.getGender())
+                .avatarUrl(account.getAvatarUrl())
                 .totalQuantity(totalQuantity)
                 .build();
     }

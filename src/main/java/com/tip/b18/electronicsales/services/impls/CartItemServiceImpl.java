@@ -3,6 +3,7 @@ package com.tip.b18.electronicsales.services.impls;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.CartItemDTO;
 import com.tip.b18.electronicsales.dto.CustomList;
+import com.tip.b18.electronicsales.dto.OrderDetailDTO;
 import com.tip.b18.electronicsales.entities.CartItem;
 import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.entities.Cart;
@@ -120,5 +121,30 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public Tuple calculatorTotalPriceAndTotalQuantityOfCart(UUID cartId) {
         return cartItemRepository.calculatorTotalPriceAndTotalQuantityOfCart(cartId);
+    }
+
+    @Override
+    public List<UUID> getCartItemsToDelete(Cart cart, List<OrderDetailDTO> orderDetailDTOList) {
+        List<UUID> productIds = orderDetailDTOList
+                .stream()
+                .map(OrderDetailDTO::getId)
+                .toList();
+        List<String> colors = orderDetailDTOList
+                .stream()
+                .map(OrderDetailDTO::getColor)
+                .toList();
+        List<CartItem> cartItems = cartItemRepository.findAllByCartIdAndProductIdInAndColorIn(
+                cart.getId(),
+                productIds,
+                colors);
+        return cartItems
+                .stream()
+                .map(CartItem::getId)
+                .toList();
+    }
+
+    @Override
+    public void deleteItemsInCart(List<UUID> uuidList) {
+        cartItemRepository.deleteAll(cartItemRepository.findAllByIdIn(uuidList));
     }
 }
