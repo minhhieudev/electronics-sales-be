@@ -11,7 +11,7 @@ public class CorsConfig {
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://electronics-sales.vercel.app/", "http://localhost:3001"));
+        configuration.setAllowedOrigins(List.of("https://electronics-sales.vercel.app/", "http://localhost:3000","https://electronics-sales-beta.vercel.app/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
