@@ -15,7 +15,6 @@ public interface ProductService {
     void addProduct(ProductDTO productDTO);
     void deleteProduct(UUID id);
     void updateProduct(UUID id, ProductDTO productDTO);
-    void scheduledProductCleanup();
     void updateStockProducts(List<OrderDetailDTO> detailDTOList);
     List<Product> findProductsById(List<OrderDetailDTO> orderDetailDTOList);
     Product findProductById(UUID uuid);

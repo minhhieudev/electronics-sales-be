@@ -1,18 +1,13 @@
 package com.tip.b18.electronicsales.controllers;
 
 import com.tip.b18.electronicsales.dto.*;
-import com.tip.b18.electronicsales.exceptions.NotFoundException;
-import com.tip.b18.electronicsales.exceptions.CredentialsException;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.services.AccountService;
-import com.tip.b18.electronicsales.utils.SecurityUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 import java.util.UUID;
 
 @RestController
@@ -24,49 +19,49 @@ public class AccountController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseDTO<CustomPage<AccountsDTO>> viewAccounts(@RequestParam(name = "search", required = false, defaultValue = "") String search,
+    public ResponseDTO<CustomPage<AccountDTO>> viewAccounts(@RequestParam(name = "search", required = false, defaultValue = "") String search,
                                                              @RequestParam(name = "page", required = false, defaultValue = "0") int page,
                                                              @RequestParam(name = "limit", required = false, defaultValue = "5") int limit){
-        CustomPage<AccountsDTO> accountsDTOS = accountService.viewAccounts(search, page, limit);
+        CustomPage<AccountDTO> accounts = accountService.viewAccounts(search, page, limit);
 
-        ResponseDTO<CustomPage<AccountsDTO>> responseDTO = new ResponseDTO<>();
+        ResponseDTO<CustomPage<AccountDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
-        responseDTO.setData(accountsDTOS);
+        responseDTO.setData(accounts);
 
         return responseDTO;
     }
 
     @GetMapping("/detail")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public ResponseDTO<AccountPersonalDTO> viewPersonalAccount(@RequestParam(name = "id", required = false) @Valid UUID id){
-        AccountPersonalDTO accountPersonalDTO = accountService.viewPersonalAccount(id);
+    public ResponseDTO<AccountDTO> viewPersonalAccount(@RequestParam(name = "id", required = false) @Valid UUID id){
+        AccountDTO accountDTO = accountService.viewPersonalAccount(id);
 
-        ResponseDTO<AccountPersonalDTO> responseDTO = new ResponseDTO<>();
+        ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
-        responseDTO.setData(accountPersonalDTO);
+        responseDTO.setData(accountDTO);
 
         return responseDTO;
     }
 
     @PutMapping("/personal")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseDTO<AccountUpdateDTO> updatePersonalAccount(@RequestBody @Valid AccountUpdateDTO accountDTORequest){
-        AccountUpdateDTO accountUpdateDTO = accountService.updatePersonalAccount(accountDTORequest);
+    public ResponseDTO<AccountDTO> updatePersonalAccount(@RequestBody @Valid AccountDTO accountDTO){
+        AccountDTO account = accountService.updatePersonalAccount(accountDTO);
 
-        ResponseDTO<AccountUpdateDTO> responseDTO = new ResponseDTO<>();
+        ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
-        responseDTO.setData(accountUpdateDTO);
+        responseDTO.setData(account);
 
         return responseDTO;
     }
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseDTO<AccountUpdateDTO> deleteAccount(@RequestParam(name = "id") @Valid UUID id){
+    public ResponseDTO<?> deleteAccount(@RequestParam(name = "id") @Valid UUID id){
         accountService.deleteAccount(id);
 
-        ResponseDTO<AccountUpdateDTO> responseDTO = new ResponseDTO<>();
+        ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_DELETE);
 
@@ -75,10 +70,10 @@ public class AccountController {
 
     @PutMapping("update-password")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public ResponseDTO<AccountUpdateDTO> changePasswordAccount(@RequestBody UpdatePasswordDTO updatePasswordDTO){
+    public ResponseDTO<?> changePasswordAccount(@RequestBody @Valid UpdatePasswordDTO updatePasswordDTO){
         accountService.changePassword(updatePasswordDTO);
 
-        ResponseDTO<AccountUpdateDTO> responseDTO = new ResponseDTO<>();
+        ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_CHANGE);
 

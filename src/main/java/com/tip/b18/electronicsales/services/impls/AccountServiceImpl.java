@@ -9,10 +9,13 @@ import com.tip.b18.electronicsales.repositories.AccountRepository;
 import com.tip.b18.electronicsales.services.AccountService;
 import com.tip.b18.electronicsales.services.CartService;
 import com.tip.b18.electronicsales.services.PasswordService;
+import com.tip.b18.electronicsales.utils.LocalDateTimeUtil;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
+import com.tip.b18.electronicsales.utils.VietnameseCarrierUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,11 +38,11 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByUserName(accountLoginDTO.getUserName())
                 .orElseThrow(() -> new CredentialsException(MessageConstant.ERROR_INVALID_CREDENTIALS));
 
-        boolean checkPassword = passwordService.matches(accountLoginDTO.getPassword(), account.getPassword());
-        if (!checkPassword) {
+        if (!passwordService.matches(accountLoginDTO.getPassword(), account.getPassword())) {
             throw new CredentialsException(MessageConstant.ERROR_INVALID_CREDENTIALS);
         }
-        AccountDTO accountDTO =accountMapper.toDTO(account);
+
+        AccountDTO accountDTO = accountMapper.toDTO(account);
         if(!account.isRole()){
             accountDTO.setTotalQuantity(cartService.getTotalQuantityItemInCartByAccountId(account.getId()));
         }
@@ -53,62 +56,32 @@ public class AccountServiceImpl implements AccountService {
                 .ifPresent(account -> {
                     throw new AlreadyExistsException(MessageConstant.ERROR_ACCOUNT_EXISTS);
                 });
-
-        String password = passwordService.encryptPassword(accountRegisterDTO.getPassword());
-
-        Account account = new Account();
-        account.setFullName(accountRegisterDTO.getFullName());
-        account.setUserName(accountRegisterDTO.getUserName());
-        account.setPassword(password);
-        account.setRole(false);
-        account.setGender(null);
-
-        accountRepository.save(account);
+        accountRepository.save(accountMapper.toAccount(accountRegisterDTO, passwordService.encryptPassword(accountRegisterDTO.getPassword())));
     }
 
     @Override
-    public CustomPage<AccountsDTO> viewAccounts(String search, int page, int limit) {
+    public CustomPage<AccountDTO> viewAccounts(String search, int page, int limit) {
         Pageable pageable = PageRequest.of(page, limit);
-        org.springframework.data.domain.Page<Account> accounts = accountRepository.findByUserNameOrPhoneNumber(search, pageable);
-
-        PageInfoDTO pageInfoDTO = new PageInfoDTO();
-        pageInfoDTO.setTotalPages(accounts.getTotalPages());
-        pageInfoDTO.setTotalElements(accounts.getTotalElements());
-
-        CustomPage<AccountsDTO> accountListDTO = new CustomPage<>();
-        accountListDTO.setPageInfo(pageInfoDTO);
-        accountListDTO.setItems(accountMapper.toDTOList(accounts));
-
-        return accountListDTO;
+        Page<Account> accounts = accountRepository.findByUserNameOrPhoneNumber(search, pageable);
+        return new CustomPage<>(accountMapper.toDTOList(accounts), new PageInfoDTO(accounts.getTotalElements(), accounts.getTotalPages()));
     }
 
     @Override
-    public AccountPersonalDTO viewPersonalAccount(UUID id) {
-        UUID userId = SecurityUtil.getAuthenticatedUserId(id);
-        Account account = accountRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT));
-        account.setId(null);
-
-        return accountMapper.toAccountPersonalDto(account);
+    public AccountDTO viewPersonalAccount(UUID id) {
+        return accountMapper.toAccountPersonalDTO(findById(SecurityUtil.getAuthenticatedUserId(id)));
     }
 
     @Override
-    public AccountUpdateDTO updatePersonalAccount(AccountUpdateDTO accountUpdateDTO) {
-        UUID id = SecurityUtil.getAuthenticatedUserId();
-        Optional<Account> optionalAccount = accountRepository.findById(id);
-        if (optionalAccount.isEmpty()) {
-            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT);
-        }
+    public AccountDTO updatePersonalAccount(AccountDTO accountDTO) {
+        Account account = findById(SecurityUtil.getAuthenticatedUserId());
 
-        Account account = optionalAccount.get();
-
-        String fullName = accountUpdateDTO.getFullName();
-        String address = accountUpdateDTO.getAddress();
-        String email = accountUpdateDTO.getEmail();
-        String phoneNumber = accountUpdateDTO.getPhoneNumber();
-        LocalDate dateOfBirth = accountUpdateDTO.getDateOfBirth();
-        Boolean gender = accountUpdateDTO.getGender();
-        String avatarUrl = accountUpdateDTO.getAvatarUrl();
+        String fullName = accountDTO.getFullName();
+        String address = accountDTO.getAddress();
+        String email = accountDTO.getEmail();
+        String phoneNumber = accountDTO.getPhoneNumber();
+        LocalDate dateOfBirth = accountDTO.getDateOfBirth();
+        Boolean gender = accountDTO.getGender();
+        String avatarUrl = accountDTO.getAvatarUrl();
 
         boolean isChange = false;
 
@@ -128,13 +101,19 @@ public class AccountServiceImpl implements AccountService {
             isChange = true;
         }
         if(!Objects.equals(phoneNumber, account.getPhoneNumber())){
-            if(phoneNumber != null && accountRepository.existsByPhoneNumber(phoneNumber)){
-                throw new AlreadyExistsException(MessageConstant.ERROR_PHONE_NUMBER_EXISTS);
+            if(phoneNumber != null){
+                VietnameseCarrierUtil.checkPhoneNumber(phoneNumber);
+                if(accountRepository.existsByPhoneNumber(phoneNumber)){
+                    throw new AlreadyExistsException(MessageConstant.ERROR_PHONE_NUMBER_EXISTS);
+                }
             }
             account.setPhoneNumber(phoneNumber);
             isChange = true;
         }
         if(!Objects.equals(dateOfBirth, account.getDateOfBirth())){
+            if(!LocalDateTimeUtil.isBefore(dateOfBirth)){
+                throw new InvalidValueException(MessageConstant.INVALID_DATE_AFTER_TODAY);
+            }
             account.setDateOfBirth(dateOfBirth);
             isChange = true;
         }
@@ -148,16 +127,15 @@ public class AccountServiceImpl implements AccountService {
         }
 
         if(isChange){
-            return accountMapper.toAccountUpdateDto(accountRepository.save(account), cartService.getTotalQuantityItemInCartByAccountId());
+            account = accountRepository.save(account);
         }
-        return accountUpdateDTO;
+        return accountMapper.toAccountUpdateDto(account, cartService.getTotalQuantityItemInCartByAccountId());
     }
 
     @Override
     public void deleteAccount(UUID id) {
         try {
-            Account account = accountRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT));
+            Account account = findById(id);
             accountRepository.delete(account);
         }catch (DataIntegrityViolationException e){
             throw new IntegrityConstraintViolationException(MessageConstant.ERROR_ACCOUNT_HAS_ORDERS);
@@ -169,19 +147,18 @@ public class AccountServiceImpl implements AccountService {
         UUID id = SecurityUtil.getAuthenticatedUserId();
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (optionalAccount.isEmpty()) {
-            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT);
+            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT_TO_CHANGE_PASSWORD);
         }
 
-        Account account = optionalAccount.get();
-
-        String currentPassword = account.getPassword();
         String oldPassword = updatePasswordDTO.getOldPassword();
         String newPassword = updatePasswordDTO.getNewPassword();
 
-        if(oldPassword != null && newPassword != null){
-            if(!passwordService.matches(oldPassword, currentPassword)){
+        if(oldPassword != null && newPassword != null){Account account = optionalAccount.get();
+            String currentPassword = account.getPassword();
+
+            if (!passwordService.matches(oldPassword, currentPassword)) {
                 throw new InvalidPasswordException(MessageConstant.ERROR_INVALID_PASSWORD);
-            }else if(passwordService.matches(newPassword, currentPassword)){
+            } else if (passwordService.matches(newPassword, currentPassword)) {
                 return;
             }
             account.setPassword(passwordService.encryptPassword(newPassword));

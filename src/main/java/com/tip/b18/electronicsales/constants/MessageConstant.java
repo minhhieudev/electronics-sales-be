@@ -19,6 +19,7 @@ public class MessageConstant {
     public static final String ERROR_INVALID_ACCESS_TOKEN = "Token không hợp lệ";
     public static final String ERROR_ACCESS_DENIED = "Bạn không có quyền truy cập vào tài nguyên này";
     public static final String ERROR_NOT_FOUND_ACCOUNT = "Không tìm thấy tài khoản";
+    public static final String ERROR_NOT_FOUND_ACCOUNT_TO_CHANGE_PASSWORD = "Không tìm thấy tài khoản cần đổi mật khẩu";
     public static final String ERROR_NOT_FOUND_CATEGORY = "Không tìm thấy thể loại";
     public static final String ERROR_NOT_FOUND_BRAND = "Không tìm thấy thương hiệu";
     public static final String ERROR_NOT_FOUND_PRODUCT = "Không tìm thấy sản phẩm";
@@ -27,13 +28,25 @@ public class MessageConstant {
     public static final String ERROR_NOT_FOUND_CART = "Không tìm thấy giỏ hàng";
     public static final String ERROR_NOT_FOUND_PRODUCTS_IN_CART = "Giỏ hàng không có sản phẩm";
     public static final String ERROR_NOT_FOUND_COLOR = "Không tìm thấy màu %s";
-    public static final String ERROR_ACCOUNT_HAS_ORDERS = "Xóa các đơn hàng liên quan trước khi xóa tài khoản";
+    public static final String ERROR_ACCOUNT_HAS_ORDERS = "Tài khoản đã phát sinh mua hàng nên không thể xóa";
     public static final String ERROR_CATEGORY_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thể loại";
     public static final String ERROR_BRAND_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thương hiệu";
-    public static final String INVALID_UUID = "Sai định dạng UUID";
+    public static final String INVALID_PARAM = "%s có giá trị không hợp lệ";
     public static final String INVALID_FIELD_FORMAT = "Trường %s không đúng kiểu dữ liệu";
     public static final String INVALID_JSON_FORMAT = "Dữ liệu JSON không hợp lệ";
     public static final String ERROR_INSUFFICIENT_STOCK = "Số lượng hàng tồn kho của sản phẩm %s không đủ";
     public static final String ERROR_UPDATE_ORDER = "Không thể cập nhật đơn hàng! Đơn hàng đã %s";
     public static final String INVALID_DATE_FORMAT_MESSAGE = "Ngày tháng không hợp lệ. Định dạng hợp lệ: yyyy-M-d hoặc yyyy-MM-dd";
+    public static final String INVALID_LENGTH_PHONE_NUMBER = "Số điện thoại yêu cầu độ dài tối đa 10 chữ số";
+    public static final String INVALID_NEW_PASSWORD = "Mật khẩu mới không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_OLD_PASSWORD = "Mật khẩu cũ không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_USERNAME = "Tài khoản không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_PASSWORD = "Mật khẩu không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_EMAIL = "Email không đúng định dạng";
+    public static final String INVALID_EMPTY_EMAIL = "Email không được bỏ trống hoặc chứa chuỗi rỗng";
+    public static final String INVALID_EMPTY_NAME = "Họ và tên không được bỏ trống hoặc chứa chuỗi rỗng";
+    public static final String INVALID_EMPTY_ADDRESS = "Địa chỉ không được bỏ trống hoặc chứa chuỗi rỗng";
+    public static final String INVALID_CHARACTER_PHONE_NUMBER = "Số điện thoại không được chứa chữ cái, bỏ trống, chứa chuỗi rỗng, chứa kí tự khoảng cách";
+    public static final String INVALID_PHONE_PREFIX = "Số điện thoại không thuộc bất kỳ nhà mạng nào ở Việt Nam";
+    public static final String INVALID_DATE_AFTER_TODAY = "Thời gian chọn không được vượt quá ngày hiện tại";
 }

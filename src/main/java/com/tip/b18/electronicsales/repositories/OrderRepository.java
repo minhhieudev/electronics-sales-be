@@ -41,7 +41,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             "FROM Order o " +
             "JOIN OrderDetail od ON od.order.id = o.id " +
             "JOIN Product p ON p.id = od.product.id " +
-            "WHERE (:startDay IS NULL OR o.createdAt >= :startDay) AND o.createdAt <= :endDay AND o.status <> :status " +
+            "WHERE (:startDay IS NULL OR o.createdAt >= :startDay) AND o.createdAt <= :endDay AND o.status = :status " +
             "GROUP BY p.sku, p.name " +
             "ORDER BY quantitySold DESC")
     List<Tuple> getTopProducts(Pageable pageable,

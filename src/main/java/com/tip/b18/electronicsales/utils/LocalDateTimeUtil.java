@@ -18,4 +18,8 @@ public class LocalDateTimeUtil {
     public static LocalDateTime parseEndDay(String day){
         return day != null ? LocalDate.parse(day, formatter()).atTime(LocalTime.MAX) : LocalDate.now().atTime(LocalTime.MAX);
     }
+
+    public static boolean isBefore(LocalDate time){
+        return time.isBefore(LocalDate.now());
+    }
 }

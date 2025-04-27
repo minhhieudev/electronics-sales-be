@@ -48,15 +48,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDTO);
     }
 
-    @ExceptionHandler({DateTimeParseException.class ,IllegalStateException.class, InsufficientStockException.class, HttpMessageNotReadableException.class ,IllegalArgumentException.class, InvalidPasswordException.class, MethodArgumentNotValidException.class, NotFoundException.class, MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({InvalidValueException.class,
+            DateTimeParseException.class,
+            IllegalStateException.class,
+            InsufficientStockException.class,
+            HttpMessageNotReadableException.class,
+            InvalidPasswordException.class,
+            MethodArgumentNotValidException.class,
+            NotFoundException.class,
+            MissingServletRequestParameterException.class,
+            MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ResponseDTO<?>> handleBadRequest(Exception e) {
         String message = null;
         if (e instanceof MethodArgumentNotValidException) {
             message = Objects.requireNonNull(((MethodArgumentNotValidException) e).getFieldError()).getDefaultMessage();
         } else if(e instanceof MissingServletRequestParameterException){
             message = MessageConstant.ERROR_VALUE_REQUIRED;
-        } else if(e instanceof MethodArgumentTypeMismatchException || e instanceof IllegalArgumentException){
-            message = MessageConstant.INVALID_UUID;
+        } else if(e instanceof MethodArgumentTypeMismatchException){
+            message = String.format(MessageConstant.INVALID_PARAM, ((MethodArgumentTypeMismatchException) e).getName());
         } else if(e instanceof HttpMessageNotReadableException){
             Throwable cause = e.getCause();
             if(cause instanceof InvalidFormatException invalidFormatException){

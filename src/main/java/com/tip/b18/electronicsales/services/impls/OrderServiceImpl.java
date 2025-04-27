@@ -72,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
                 : orderRepository.findByIdAndAccountId(id, SecurityUtil.getAuthenticatedUserId());
 
         if(order.isEmpty()){
-            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT);
+            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ORDER);
         }
 
         return orderMapper.toOrderDTO(order.get(), orderDetailService.findAllByOrderId(List.of(id)));
@@ -102,7 +102,6 @@ public class OrderServiceImpl implements OrderService {
             cartItemService.deleteItemsInCart(cartItemIds);
             cartService.updateTotalPriceAndTotalQuantityOfCart(cart);
         }
-
         return orderMapper.createOrderResponse(order, orderDetailDTOList, cartService.getTotalQuantityItemInCartByAccountId());
     }
 
@@ -161,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
                                 PageableUtil.toPageable(limit),
                                 LocalDateTimeUtil.parseStartDay(startDay),
                                 LocalDateTimeUtil.parseEndDay(endDay),
-                                Status.CANCELED)
+                                Status.COMPLETED)
                 )
         );
     }

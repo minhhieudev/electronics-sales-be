@@ -9,9 +9,9 @@ import java.util.UUID;
 public interface AccountService {
     AccountDTO loginAccount(AccountLoginDTO accountLoginDTO);
     void registerAccount(AccountRegisterDTO accountRegisterDTO);
-    CustomPage<AccountsDTO> viewAccounts(String search, int page, int limit);
-    AccountPersonalDTO viewPersonalAccount(UUID id);
-    AccountUpdateDTO updatePersonalAccount(AccountUpdateDTO accountUpdateDTO);
+    CustomPage<AccountDTO> viewAccounts(String search, int page, int limit);
+    AccountDTO viewPersonalAccount(UUID id);
+    AccountDTO updatePersonalAccount(AccountDTO accountDTO);
     void deleteAccount(UUID id);
     void changePassword(UpdatePasswordDTO updatePasswordDTO);
     Account findById(UUID id);

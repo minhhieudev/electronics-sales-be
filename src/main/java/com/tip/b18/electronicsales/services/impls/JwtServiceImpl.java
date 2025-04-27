@@ -18,7 +18,7 @@ import java.util.UUID;
 public class JwtServiceImpl implements JwtService {
     private final Key key;
 
-    JwtServiceImpl(@Value("${jwt.secret}") String SECRET_KEY){
+    public JwtServiceImpl(@Value("${jwt.secret}") String SECRET_KEY){
         this.key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 

@@ -214,24 +214,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24 * 7)
-    @Transactional
-    public void scheduledProductCleanup() {
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
-        List<Product> products = productRepository.findByIsDeletedTrueAndDeletedAtBefore(sevenDaysAgo);
-
-        List<UUID> productIdList = new ArrayList<>();
-        for (Product product : products){
-            productIdList.add(product.getId());
-        }
-
-        imageService.deleteImages(productIdList);
-        List<Color> colorList = productColorService.getColorsByProductColors(productIdList);
-        colorService.deleteColors(colorList);
-        productRepository.deleteAll(products);
-    }
-
-    @Override
     public void updateStockProducts(List<OrderDetailDTO> orderDetailDTOList) {
         List<UUID> uuidList = orderDetailDTOList
                 .stream()
@@ -242,7 +224,7 @@ public class ProductServiceImpl implements ProductService {
 
         Map<UUID, Integer> map = orderDetailDTOList
                 .stream()
-                .collect(Collectors.toMap(OrderDetailDTO::getId, OrderDetailDTO::getQuantity));
+                .collect(Collectors.toMap(OrderDetailDTO::getId, OrderDetailDTO::getQuantity, Integer::sum));
 
         List<Product> productListToUpdate = products
                 .stream()

@@ -128,6 +128,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void updateTotalPriceAndTotalQuantityOfCart(Cart cart) {
         Tuple tuple = cartItemService.calculatorTotalPriceAndTotalQuantityOfCart(cart.getId());
+
         BigDecimal totalPrice = tuple.get("totalPrice", BigDecimal.class);
         Long totalQuantity = tuple.get("totalQuantity", Long.class);
 
